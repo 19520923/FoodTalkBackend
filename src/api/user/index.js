@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { Router } from 'express'
 import { middleware as query } from 'querymen'
 import { middleware as body } from 'bodymen'
@@ -7,7 +8,7 @@ import { schema } from './model'
 export User, { schema } from './model'
 
 const router = new Router()
-const { email, password, name, picture, role } = schema.tree
+const { email, password, name, cover_url, about, avatar_url, username, role } = schema.tree
 
 /**
  * @api {get} /users Retrieve users
@@ -57,7 +58,7 @@ router.get('/:id',
  * @apiParam {String} email User's email.
  * @apiParam {String{6..}} password User's password.
  * @apiParam {String} [name] User's name.
- * @apiParam {String} [picture] User's picture.
+ * @apiParam {String} [avatar_url] User's avatar.
  * @apiParam {String=user,admin} [role=user] User's role.
  * @apiSuccess (Sucess 201) {Object} user User's data.
  * @apiError {Object} 400 Some parameters may contain invalid values.
@@ -66,7 +67,7 @@ router.get('/:id',
  */
 router.post('/',
   master(),
-  body({ email, password, name, picture, role }),
+  body({ email, password, name, avatar_url, username, role }),
   create)
 
 /**
@@ -84,7 +85,7 @@ router.post('/',
  */
 router.put('/:id',
   token({ required: true }),
-  body({ name, picture }),
+  body({ name, avatar_url, username, about, cover_url }),
   update)
 
 /**

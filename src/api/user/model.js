@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import crypto from 'crypto'
 import bcrypt from 'bcrypt'
 import randtoken from 'rand-token'
@@ -26,6 +27,50 @@ const userSchema = new Schema({
     index: true,
     trim: true
   },
+  username: {
+    type: String,
+    required: true,
+    trim: true,
+    unique: true,
+    lowercase: true
+  },
+  is_current: {
+    type: Boolean,
+    default: false
+  },
+  is_active: {
+    type: Boolean,
+    default: true
+  },
+  is_verified: {
+    type: Boolean,
+    default: true
+  },
+  avatar_url: {
+    type: String,
+    trim: true
+  },
+  cover_url: {
+    type: String,
+    trim: true,
+    default: 'https://i.pinimg.com/originals/28/35/be/2835be38b5274a4b20155999a7613542.jpg'
+  },
+  follower: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'User'
+    }
+  ],
+
+  following: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'User'
+    }
+  ],
+  about: String,
+  socket_id: String,
+  last_login: Date,
   services: {
     facebook: String,
     google: String
@@ -34,19 +79,15 @@ const userSchema = new Schema({
     type: String,
     enum: roles,
     default: 'user'
-  },
-  picture: {
-    type: String,
-    trim: true
   }
 }, {
-  timestamps: true
+  timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
 })
 
 userSchema.path('email').set(function (email) {
-  if (!this.picture || this.picture.indexOf('https://gravatar.com') === 0) {
+  if (!this.avatar_url || this.avatar_url.indexOf('https://gravatar.com') === 0) {
     const hash = crypto.createHash('md5').update(email).digest('hex')
-    this.picture = `https://gravatar.com/avatar/${hash}?d=identicon`
+    this.avatar_url = `https://gravatar.com/avatar/${hash}?d=identicon`
   }
 
   if (!this.name) {
@@ -56,6 +97,7 @@ userSchema.path('email').set(function (email) {
   return email
 })
 
+// hash password
 userSchema.pre('save', function (next) {
   if (!this.isModified('password')) return next()
 
@@ -68,22 +110,22 @@ userSchema.pre('save', function (next) {
   }).catch(next)
 })
 
+// get user
 userSchema.methods = {
-  view (full) {
+  view () {
     const view = {}
-    let fields = ['id', 'name', 'picture']
-
-    if (full) {
-      fields = [...fields, 'email', 'createdAt']
-    }
+    const fields = ['id', 'name', 'email', 'username', 'is_current', 'avatar_url', 'cover_url', 'about', 'last_login']
 
     fields.forEach((field) => { view[field] = this[field] })
+    view.follower = this.populate('follower')
+    view.following = this.populate('following')
 
     return view
   },
 
-  authenticate (password) {
-    return bcrypt.compare(password, this.password).then((valid) => valid ? this : false)
+  async authenticate (password) {
+    const valid = await bcrypt.compare(password, this.password)
+    return valid ? this : false
   }
 
 }
@@ -91,22 +133,22 @@ userSchema.methods = {
 userSchema.statics = {
   roles,
 
-  createFromService ({ service, id, email, name, picture }) {
+  createFromService ({ service, id, email, name, avatar_url }) {
     return this.findOne({ $or: [{ [`services.${service}`]: id }, { email }] }).then((user) => {
       if (user) {
         user.services[service] = id
         user.name = name
-        user.picture = picture
+        user.avatar_url = avatar_url
         return user.save()
       } else {
         const password = randtoken.generate(16)
-        return this.create({ services: { [service]: id }, email, password, name, picture })
+        return this.create({ services: { [service]: id }, email, password, name, avatar_url })
       }
     })
   }
 }
 
-userSchema.plugin(mongooseKeywords, { paths: ['email', 'name'] })
+userSchema.plugin(mongooseKeywords, { paths: ['email', 'name', 'username'] })
 
 const model = mongoose.model('User', userSchema)
 

@@ -19,6 +19,6 @@ setImmediate(() => {
   })
 })
 
-socket(server)
+// socket(server)
 
 export default app

@@ -21,13 +21,13 @@ export const show = ({ params }, res, next) =>
     .catch(next)
 
 export const showMe = ({ user }, res) =>
-  res.json(user.view(true))
+  res.json(user.view())
 
 export const create = ({ bodymen: { body } }, res, next) =>
   User.create(body)
     .then(user => {
       sign(user.id)
-        .then((token) => ({ token, user: user.view(true) }))
+        .then((token) => ({ token, user: user.view() }))
         .then(success(res, 201))
     })
     .catch((err) => {
