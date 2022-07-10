@@ -3,6 +3,8 @@ import user from "./user";
 import auth from "./auth";
 import passwordReset from "./password-reset";
 import food from "./food";
+import notification from './notification'
+import foodRate from './food-rate'
 
 const router = new Router();
 
@@ -33,5 +35,7 @@ router.use("/users", user);
 router.use("/auth", auth);
 router.use("/password-resets", passwordReset);
 router.use("/foods", food);
+router.use('/notifications', notification)
+router.use('/food-rates', foodRate)
 
 export default router;

@@ -1,5 +1,4 @@
 import mongoose, { Schema } from "mongoose";
-import { fields } from "../user/model";
 import mongooseKeywords from "mongoose-keywords";
 
 const foodSchema = new Schema(
@@ -7,7 +6,7 @@ const foodSchema = new Schema(
     name: {
       type: String,
       required: true,
-      index: true
+      index: true,
     },
     ingredients: {
       type: Array,
@@ -24,6 +23,7 @@ const foodSchema = new Schema(
     author: {
       type: Schema.Types.ObjectId,
       ref: "User",
+      required: true,
     },
     photo: {
       type: String,
@@ -45,7 +45,6 @@ foodSchema.pre(/^find/, function (next) {
   }
   this.populate({
     path: "author",
-    select: fields,
     options: { _recursed: true },
   });
   next();
@@ -53,10 +52,12 @@ foodSchema.pre(/^find/, function (next) {
 
 foodSchema.post(/^save/, async function (child) {
   try {
-    if (!child.populated('author')) {
-        await child.populate('author', fields).execPopulate();
+    if (!child.populated("author")) {
+      await child.populate("author").execPopulate();
     }
-} catch (err) {}
+  } catch (err) {
+    console.log(err);
+  }
 });
 
 foodSchema.methods = {
@@ -68,7 +69,7 @@ foodSchema.methods = {
       ingredients: this.ingredients,
       recipe: this.recipe,
       avg_score: this.avg_score,
-      author: this.author,
+      author: this.author.view(),
       photo: this.photo,
       num_rate: this.num_rate,
       created_at: this.created_at,

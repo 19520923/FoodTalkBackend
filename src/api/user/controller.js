@@ -135,7 +135,7 @@ export const unfollow = ({ params, user }, res, next) => {
       if (user.id === params.id) {
         res.status(401).json({
           error: "Follow failed",
-          message: "You can't follow yourself",
+          message: "You can't unfollow yourself",
         });
         return null;
       }
@@ -143,7 +143,7 @@ export const unfollow = ({ params, user }, res, next) => {
       if (!result.follower.includes(user)) {
         res.status(401).json({
           error: "Follow failed",
-          message: "Already followed",
+          message: "Already unfollowed",
         });
         return null;
       }

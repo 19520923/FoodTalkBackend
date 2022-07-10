@@ -1,6 +1,8 @@
-import { success, notFound } from "../../services/response/";
+import { success, notFound, authorOrAdmin } from "../../services/response/";
 import { Food } from ".";
-import { toAll } from "../../services/socket";
+import { toAll, to } from "../../services/socket";
+import { Notification } from "../notification";
+import { User } from "../user";
 
 export const create = ({ user, bodymen: { body } }, res, next) =>
   Food.create({
@@ -11,6 +13,23 @@ export const create = ({ user, bodymen: { body } }, res, next) =>
   })
     .then((food) => food.view())
     .then(toAll("food:create"))
+    .then((food) => {
+      food.author.follower.forEach(async (follower) => {
+        const notification = await Notification.create({
+          author: food.author,
+          content: `${food.author.username} has added new food recipe`,
+          type: "FOOD",
+          food_data: food,
+          receiver: follower,
+        }).then((notification) => (notification ? notification.view() : null));
+
+        await User.findById(follower.id).then(
+          to("notification:create", notification)
+        );
+      });
+
+      return food;
+    })
     .then(success(res, 201))
     .catch(next);
 
@@ -47,9 +66,10 @@ export const show = ({ params }, res, next) =>
     .then(success(res))
     .catch(next);
 
-export const update = ({ bodymen: { body }, params }, res, next) =>
+export const update = ({ bodymen: { body }, user, params }, res, next) =>
   Food.findById(params.id)
     .then(notFound(res))
+    .then(authorOrAdmin(res, user, "author"))
     .then((food) => (food ? Object.assign(food, body).save() : null))
     .then((food) => (food ? food.view() : null))
     .then(success(res))
@@ -58,6 +78,7 @@ export const update = ({ bodymen: { body }, params }, res, next) =>
 export const destroy = ({ params }, res, next) =>
   Food.findById(params.id)
     .then(notFound(res))
+    .then(authorOrAdmin(res, user, "author"))
     .then((food) => (food ? food.remove() : null))
     .then(success(res, 204))
     .catch(next);

@@ -32,7 +32,7 @@ export const initSocket = function (server) {
 };
 
 export const toAll = (message) => (payload) => {
-  socket.broadcast.emit(message, payload);
+  if (socket) socket.broadcast.emit(message, payload);
   return payload;
 };
 
