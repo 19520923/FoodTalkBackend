@@ -2,7 +2,7 @@ import { Router } from 'express'
 import { middleware as query } from 'querymen'
 import { middleware as body } from 'bodymen'
 import { token } from '../../services/passport'
-import { create, index, destroy } from './controller'
+import { create, index, destroy, seen } from './controller'
 import { schema } from './model'
 export Notification, { schema } from './model'
 
@@ -62,5 +62,8 @@ router.get('/',
 router.delete('/:id',
   token({ required: true, roles: ['admin'] }),
   destroy)
+
+
+router.post("/:id/seen", token({ required: true }), seen)
 
 export default router

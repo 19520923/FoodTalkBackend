@@ -5,6 +5,11 @@ import passwordReset from "./password-reset";
 import food from "./food";
 import notification from './notification'
 import foodRate from './food-rate'
+import ingredient from './ingredient'
+import post from './post'
+import postComment from './post-comment'
+import chat from './chat'
+import message from './message'
 
 const router = new Router();
 
@@ -37,5 +42,10 @@ router.use("/password-resets", passwordReset);
 router.use("/foods", food);
 router.use('/notifications', notification)
 router.use('/food-rates', foodRate)
+router.use('/ingredients', ingredient)
+router.use('/posts', post)
+router.use('/post-comments', postComment)
+router.use('/chats', chat)
+router.use('/messages', message)
 
 export default router;

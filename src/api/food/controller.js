@@ -13,7 +13,7 @@ export const create = ({ user, bodymen: { body } }, res, next) =>
   })
     .then((food) => food.view())
     .then(toAll("food:create"))
-    .then((food) => {
+    .then(async (food) => {
       food.author.follower.forEach(async (follower) => {
         const notification = await Notification.create({
           author: food.author,

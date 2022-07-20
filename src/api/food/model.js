@@ -11,10 +11,12 @@ const foodSchema = new Schema(
     ingredients: {
       type: Array,
       default: [],
+      required: true,
     },
     recipe: {
       type: Array,
       default: [],
+      required: true,
     },
     avg_score: {
       type: Number,

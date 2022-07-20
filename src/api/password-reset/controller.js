@@ -42,7 +42,7 @@ export const show = ({ params: { token } }, res, next) =>
   PasswordReset.findOne({ token })
     .populate("user")
     .then(notFound(res))
-    .then((reset) => (reset ? reset.view(true) : null))
+    .then((reset) => (reset ? reset.view() : null))
     .then(success(res))
     .catch(next);
 
@@ -66,7 +66,7 @@ export const update = (
         .set({ password })
         .save()
         .then(() => PasswordReset.deleteMany({ user }))
-        .then(() => user.view(true));
+        .then(() => user.view());
     })
     .then(success(res))
     .catch(next);

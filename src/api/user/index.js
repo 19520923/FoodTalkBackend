@@ -36,7 +36,7 @@ const { email, password, name, cover_url, about, avatar_url, username, role } =
  * @apiError {Object} 400 Some parameters may contain invalid values.
  * @apiError 401 Admin access only.
  */
-router.get("/", token({ required: true, roles: ["admin"] }), query(), index);
+router.get("/", token({ required: true }), query(), index);
 
 /**
  * @api {get} /users/me Retrieve current user
@@ -56,7 +56,7 @@ router.get("/me", token({ required: true }), showMe);
  * @apiSuccess {Object} user User's data.
  * @apiError 404 User not found.
  */
-router.get("/:id", show);
+router.get("/:id", token({ required: true }), show);
 
 /**
  * @api {post} /users Create user

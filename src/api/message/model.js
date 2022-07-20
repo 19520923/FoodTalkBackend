@@ -1,68 +1,68 @@
 import mongoose, { Schema } from "mongoose";
 
-const foodRateSchema = new Schema(
+const messageSchema = new Schema(
   {
     author: {
       type: Schema.ObjectId,
       ref: "User",
       required: true,
     },
-    food: {
+    chat: {
       type: Schema.ObjectId,
-      ref: "Food",
+      ref: "Chat",
       required: true,
     },
     content: {
       type: String,
       required: true,
     },
-    score: {
-      type: Number,
-      default: 10,
+    type: {
+      type: String,
+      enum: ["TEXT", "HTML", "PICTURE"],
     },
   },
-  {
-    timestamps: { createdAt: "created_at", updatedAt: "updated_at" },
-  }
+  { timestamps: { createdAt: "created_at", updatedAt: "updated_at" } }
 );
 
-foodRateSchema.pre(/^find/, function (next) {
+messageSchema.pre(/^find/, function (next) {
   if (this.options._recursed) {
     return next();
   }
   this.populate({
-    path: "author food",
+    path: "author",
     options: { _recursed: true },
   });
   next();
 });
 
-foodRateSchema.post(/^save/, async function (child) {
+messageSchema.post(/^save/, async function (child) {
   try {
-    if (!child.populated("author food")) {
-      await child.populate("author food").execPopulate();
+    if (!child.populated("author")) {
+      await child.populate("author").execPopulate();
     }
   } catch (err) {
     console.log(err);
   }
 });
 
-foodRateSchema.methods = {
+messageSchema.methods = {
   view() {
     return {
       // simple view
       id: this.id,
       author: this.author.view(),
-      food: this.food,
+      chat: this.chat,
       content: this.content,
-      score: this.score,
+      type: this.type,
       created_at: this.created_at,
       updated_at: this.updated_at,
     };
   },
 };
 
-const model = mongoose.model("FoodRate", foodRateSchema);
+foodSchema.plugin(mongooseKeywords, { paths: ["content"] });
+
+const model = mongoose.model("Message", messageSchema);
 
 export const schema = model.schema;
 export default model;
