@@ -1,13 +1,13 @@
-import { Router } from 'express'
-import { middleware as query } from 'querymen'
-import { middleware as body } from 'bodymen'
-import { token } from '../../services/passport'
-import { create, index, update, destroy } from './controller'
-import { schema } from './model'
-export Message, { schema } from './model'
+import { Router } from "express";
+import { middleware as query } from "querymen";
+import { middleware as body } from "bodymen";
+import { token } from "../../services/passport";
+import { create, index, update, destroy } from "./controller";
+import { schema } from "./model";
+export Message, { schema } from "./model";
 
-const router = new Router()
-const { chat, content, type } = schema.tree
+const router = new Router();
+const { chat, content, type } = schema.tree;
 
 /**
  * @api {post} /messages Create message
@@ -23,10 +23,12 @@ const { chat, content, type } = schema.tree
  * @apiError 404 Message not found.
  * @apiError 401 user access only.
  */
-router.post('/',
+router.post(
+  "/",
   token({ required: true }),
   body({ chat, content, type }),
-  create)
+  create
+);
 
 /**
  * @api {get} /messages Retrieve messages
@@ -40,10 +42,7 @@ router.post('/',
  * @apiError {Object} 400 Some parameters may contain invalid values.
  * @apiError 401 user access only.
  */
-router.get('/:id',
-  token({ required: true }),
-  query(),
-  index)
+router.get("/:id", token({ required: true }), query(), index);
 
 /**
  * @api {put} /messages/:id Update message
@@ -59,10 +58,12 @@ router.get('/:id',
  * @apiError 404 Message not found.
  * @apiError 401 user access only.
  */
-router.put('/:id',
+router.put(
+  "/:id",
   token({ required: true }),
   body({ chat, content, type }),
-  update)
+  update
+);
 
 /**
  * @api {delete} /messages/:id Delete message
@@ -74,8 +75,6 @@ router.put('/:id',
  * @apiError 404 Message not found.
  * @apiError 401 user access only.
  */
-router.delete('/:id',
-  token({ required: true }),
-  destroy)
+router.delete("/:id", token({ required: true }), destroy);
 
-export default router
+export default router;
