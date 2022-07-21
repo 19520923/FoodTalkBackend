@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import mongooseKeywords from "mongoose-keywords";
 
 const chatSchema = new Schema(
   {

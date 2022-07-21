@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import mongooseKeywords from "mongoose-keywords";
 
 const messageSchema = new Schema(
   {
@@ -60,7 +61,7 @@ messageSchema.methods = {
   },
 };
 
-foodSchema.plugin(mongooseKeywords, { paths: ["content"] });
+messageSchema.plugin(mongooseKeywords, { paths: ["content"] });
 
 const model = mongoose.model("Message", messageSchema);
 
