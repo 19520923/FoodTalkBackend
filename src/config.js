@@ -27,12 +27,9 @@ const config = {
     ip: process.env.IP || "0.0.0.0",
     apiRoot: process.env.API_ROOT || "",
     defaultEmail: "no-reply@foodtalk-backend.com",
-    sendgridKey:
-      requireProcessEnv("SENDGRID_KEY") ||
-      "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",
-    masterKey: requireProcessEnv("MASTER_KEY") || "http://0.0.0.0:9000",
-    jwtSecret:
-      requireProcessEnv("JWT_SECRET") || "jmiYM5rGCcJSw1JEjNfoO37AGiE2eFr5",
+    sendgridKey: requireProcessEnv("SENDGRID_KEY"),
+    masterKey: requireProcessEnv("MASTER_KEY"),
+    jwtSecret: requireProcessEnv("JWT_SECRET"),
     mongo: {
       options: {
         useUnifiedTopology: true,
