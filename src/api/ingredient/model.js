@@ -61,7 +61,7 @@ ingredientSchema.methods = {
   view() {
     return {
       // simple view
-      id: this.id,
+      _id: this.id,
       ingr1: this.ingr1,
       ingr2: this.ingr2,
       npmi: this.npmi,

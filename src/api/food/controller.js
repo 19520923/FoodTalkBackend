@@ -45,13 +45,18 @@ export const index = ({ querymen: { query, select, cursor } }, res, next) =>
     .catch(next);
 
 export const showPersonal = (
-  { user, querymen: { query, select, cursor } },
+  { user, params, querymen: { query, select, cursor } },
   res,
   next
 ) =>
-  Food.count({ author: user.id }, query, select, cursor)
+  Food.count(
+    { author: params.id === "me" ? user.id : params.id },
+    query,
+    select,
+    cursor
+  )
     .then((count) =>
-      Food.find({ author: user.id }, query, select, cursor).then((foods) => ({
+      Food.find({ author: params.id === "me" ? user.id : params.id  }, query, select, cursor).then((foods) => ({
         count,
         rows: foods.map((food) => food.view()),
       }))

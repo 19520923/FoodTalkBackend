@@ -50,7 +50,7 @@ messageSchema.methods = {
   view() {
     return {
       // simple view
-      id: this.id,
+      _id: this.id,
       author: this.author.view(),
       chat: this.chat,
       content: this.content,

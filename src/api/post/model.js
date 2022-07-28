@@ -32,11 +32,6 @@ const postSchema = new Schema(
       default: 0,
     },
 
-    num_heart: {
-      type: Number,
-      default: 0,
-    },
-
     author: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -92,7 +87,7 @@ postSchema.methods = {
   view() {
     return {
       // simple view
-      id: this.id,
+      _id: this.id,
       author: this.author.view(),
       foods: this.foods.map((food) => food.view()),
       content: this.content,
@@ -110,14 +105,15 @@ postSchema.methods = {
   likeDislike(user_id) {
     if (this.reactions.includes(user_id)) {
       this.reactions.push(user_id);
-      this.num_heart++;
     } else {
       this.reactions.splice(this.reactions.indexOf(user_id), 1);
-      this.num_heart--;
     }
 
     this.save();
-    return user_id;
+    return {
+      _id: this._id,
+      reactions: this.reactions,
+    };
   },
 };
 

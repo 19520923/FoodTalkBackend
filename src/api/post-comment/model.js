@@ -79,7 +79,7 @@ postCommentSchema.methods = {
   view() {
     return {
       // simple view
-      id: this.id,
+      _id: this.id,
       author: this.author.view(),
       post: this.post,
       content: this.content,

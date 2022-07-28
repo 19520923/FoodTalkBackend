@@ -51,7 +51,7 @@ foodRateSchema.methods = {
   view() {
     return {
       // simple view
-      id: this.id,
+      _id: this.id,
       author: this.author.view(),
       food: this.food,
       content: this.content,

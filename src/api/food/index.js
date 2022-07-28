@@ -54,7 +54,7 @@ router.post(
  * @apiError 401 user access only.
  */
 router.get("/", token({ required: true }), query(), index);
-router.get("/personal", token({ required: true }), query(), showPersonal);
+router.get("/:id", token({ required: true }), query(), showPersonal);
 
 /**
  * @api {get} /foods/:id Retrieve food
@@ -67,7 +67,7 @@ router.get("/personal", token({ required: true }), query(), showPersonal);
  * @apiError 404 Food not found.
  * @apiError 401 user access only.
  */
-router.get("/:id", token({ required: true }), show);
+// router.get("/:id", token({ required: true }), show);
 
 /**
  * @api {put} /foods/:id Update food

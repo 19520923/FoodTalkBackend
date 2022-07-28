@@ -39,18 +39,18 @@ export const index = ({ querymen: { query, select, cursor } }, res, next) =>
     .catch(next);
 
 export const showUser = (
-  { parmas, querymen: { query, select, cursor } },
+  { user, params, querymen: { query, select, cursor } },
   res,
   next
 ) =>
-  Post.count({ ...query, author: parmas.id })
+  Post.count({ ...query, author: params.id === "me" ? user.id : params.id })
     .then((count) =>
-      Post.find({ ...query, author: parmas.id }, select, cursor).sort('-created_at').then(
-        (posts) => ({
+      Post.find({ ...query, author: params.id === "me" ? user.id : params.id  }, select, cursor)
+        .sort("-created_at")
+        .then((posts) => ({
           count,
           rows: posts.map((post) => post.view()),
-        })
-      )
+        }))
     )
     .then(success(res))
     .catch(next);
@@ -83,7 +83,7 @@ export const likeDislike = ({ user, params }, res, next) => {
   Post.findById(params.id)
     .then(notFound(res))
     .then((post) => (post ? post.likeDislike(user.id) : null))
-    .then(toAll('post-reactions:likeDislike'))
+    .then(toAll("post-reactions:likeDislike"))
     .then(success(res))
     .catch(next);
 };

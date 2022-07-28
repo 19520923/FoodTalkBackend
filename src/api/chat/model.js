@@ -54,7 +54,7 @@ chatSchema.methods = {
   view() {
     return {
       // simple view
-      id: this.id,
+      _id: this.id,
       user_1: this.user_1.view(),
       user_2: this.user_2.view(),
       is_user_1_seen: this.is_user_1_seen,
@@ -63,6 +63,19 @@ chatSchema.methods = {
       created_at: this.created_at,
       updated_at: this.updated_at,
     };
+  },
+
+  seen(user) {
+    if (this.user_1.id === user.id) {
+      this.set({ is_user_1_seen: true }).save();
+      return this.user_2;
+    }
+    this.set({ is_user_2_seen: true }).save();
+    return this.user_1;
+  },
+
+  getU(user) {
+    return this.user_1.id === user.id ? this.user_2 : this.user_1;
   },
 };
 
