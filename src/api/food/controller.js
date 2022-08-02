@@ -10,6 +10,7 @@ export const create = ({ user, bodymen: { body } }, res, next) =>
     name: body.name,
     ingredients: body.ingredients,
     recipe: body.recipe,
+    photo: body.photo,
   })
     .then((food) => food.view())
     .then(toAll("food:create"))
@@ -56,7 +57,12 @@ export const showPersonal = (
     cursor
   )
     .then((count) =>
-      Food.find({ author: params.id === "me" ? user.id : params.id  }, query, select, cursor).then((foods) => ({
+      Food.find(
+        { author: params.id === "me" ? user.id : params.id },
+        query,
+        select,
+        cursor
+      ).then((foods) => ({
         count,
         rows: foods.map((food) => food.view()),
       }))

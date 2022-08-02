@@ -62,29 +62,14 @@ ingredientSchema.methods = {
     return {
       // simple view
       _id: this.id,
-      ingr1: this.ingr1,
-      ingr2: this.ingr2,
-      npmi: this.npmi,
-      jaccard: this.jaccard,
-      pmi: this.pmi,
-      pmi2: this.pmi2,
-      pmi3: this.pmi3,
-      ppmi: this.ppmi,
-      co_occurence: this.co_occurence,
-      ingr1_count: this.ingr1_count,
-      ingr2_count: this.ingr2_count,
-      lable: this.lable,
-      ingr1_type: this.ingr1_type,
-      ingr2_type: this.ingr2_type,
-      pairing_type: this.pairing_type,
-      npmi_normalized: this.npmi_normalized,
-      created_at: this.created_at,
-      updated_at: this.updated_at,
+      ingr: this.ingr2,
+      score: this.npmi,
+      type: this.ingr2_type,
     };
   },
 };
 
-ingredientSchema.plugin(mongooseKeywords, { paths: ["ingr1"] });
+ingredientSchema.plugin(mongooseKeywords, { paths: ["ingr2"] });
 
 const model = mongoose.model("Ingredient", ingredientSchema);
 
