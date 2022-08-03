@@ -103,7 +103,7 @@ postSchema.methods = {
   },
 
   likeDislike(user_id) {
-    if (this.reactions.includes(user_id)) {
+    if (!this.reactions.includes(user_id)) {
       this.reactions.push(user_id);
     } else {
       this.reactions.splice(this.reactions.indexOf(user_id), 1);
