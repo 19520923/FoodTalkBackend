@@ -20,7 +20,7 @@ export const create = ({ user, bodymen: { body } }, res, next) =>
       await User.findById(user.id).then(
         to("notification:create", notification)
       );
-      return food;
+      return foodRate;
     })
     .then(success(res, 201))
     .catch(next);

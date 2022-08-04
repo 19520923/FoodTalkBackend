@@ -53,7 +53,7 @@ foodRateSchema.methods = {
       // simple view
       _id: this.id,
       author: this.author.view(),
-      food: this.food,
+      food: this.food.view(),
       content: this.content,
       score: this.score,
       created_at: this.created_at,
