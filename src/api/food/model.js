@@ -18,7 +18,7 @@ const foodSchema = new Schema(
       default: [],
       required: true,
     },
-    avg_score: {
+    score: {
       type: Number,
       default: 0,
     },
@@ -70,7 +70,7 @@ foodSchema.methods = {
       name: this.name,
       ingredients: this.ingredients,
       recipe: this.recipe,
-      avg_score: this.avg_score,
+      score: this.score,
       author: this.author.view(),
       photo: this.photo,
       num_rate: this.num_rate,
