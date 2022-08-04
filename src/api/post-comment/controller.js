@@ -1,7 +1,7 @@
 import { success, notFound, authorOrAdmin } from '../../services/response/'
 import { PostComment } from '.'
 import {User} from '../user'
-import { toAll } from '../../services/socket';
+import { toAll, to } from '../../services/socket';
 import {Notification} from '../notification'
 
 export const create = ({ user, bodymen: { body } }, res, next) =>
