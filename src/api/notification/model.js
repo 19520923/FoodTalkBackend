@@ -46,17 +46,21 @@ notificationSchema.pre(/^find/, function (next) {
   this.populate({
     path: "author",
     options: { _recursed: true },
-  }).populate({
-    path: "receiver",
-    options: { _recursed: true },
-  }).populate("post_data food_data");
+  })
+    .populate({
+      path: "receiver",
+      options: { _recursed: true },
+    })
+    .populate("post_data food_data");
   next();
 });
 
 notificationSchema.post(/^save/, async function (child) {
   try {
     if (!child.populated("author receiver post_data food_data")) {
-      await child.populate("author receiver post_data food_data").execPopulate();
+      await child
+        .populate("author receiver post_data food_data")
+        .execPopulate();
     }
   } catch (err) {}
 });
@@ -72,8 +76,8 @@ notificationSchema.methods = {
       destination: this.destination,
       is_seen: this.is_seen,
       content: this.content,
-      post_data: this.post_data.view(),
-      food_data: this.food_data.view(),
+      post_data: this.post_data ? this.post_data.view() : null,
+      food_data: this.food_data ? this.food_data.view() : null,
       created_at: this.created_at,
       updated_at: this.updated_at,
     };
