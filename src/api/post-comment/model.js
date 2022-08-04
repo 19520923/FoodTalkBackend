@@ -50,11 +50,12 @@ postCommentSchema.pre(/^find/, function (next) {
 
 postCommentSchema.post(/^save/, async function (child) {
   try {
+    await Post.updateOne({ id: child.post }, { $inc: { num_comment: 1 } });
+    
     if (!child.populated("author post")) {
       await child.populate("author post").execPopulate();
     }
 
-    await Post.updateOne({ id: child.post }, { $inc: { num_comment: 1 } });
   } catch (err) {
     console.log(err);
   }

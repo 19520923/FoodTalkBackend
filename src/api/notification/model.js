@@ -49,14 +49,14 @@ notificationSchema.pre(/^find/, function (next) {
   }).populate({
     path: "receiver",
     options: { _recursed: true },
-  });
+  }).populate("post_data food_data");
   next();
 });
 
 notificationSchema.post(/^save/, async function (child) {
   try {
-    if (!child.populated("author receiver")) {
-      await child.populate("author").populate("receiver").execPopulate();
+    if (!child.populated("author receiver post_data food_data")) {
+      await child.populate("author receiver post_data food_data").execPopulate();
     }
   } catch (err) {}
 });
