@@ -15,7 +15,7 @@ export const create = ({ user, bodymen: { body } }, res, next) =>
         type: "FOOD",
         food_data: foodRate.food.id,
         receiver: foodRate.author.id,
-      }).then((notification) => (notification ? notification.view() : null));
+      }).then((noti) => (noti ? noti.view() : null));
 
       await User.findById(user.id).then(
         to("notification:create", notification)
