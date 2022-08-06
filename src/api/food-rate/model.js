@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import Food from "../food";
+import { Food } from "../food";
 
 const foodRateSchema = new Schema(
   {
@@ -44,7 +44,7 @@ foodRateSchema.post(/^save/, async function (child) {
       { food: child.food },
       { $inc: { num_rate: 1, score: child.score } }
     );
-    
+
     if (!child.populated("author food")) {
       await child.populate("author food").execPopulate();
     }
