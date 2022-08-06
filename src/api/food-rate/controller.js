@@ -13,8 +13,8 @@ export const create = ({ user, bodymen: { body } }, res, next) =>
         author: user,
         content: `${user.username} has rate your food recipe`,
         type: "FOOD",
-        food_data: foodRate.food,
-        receiver: foodRate.author,
+        food_data: foodRate.food.id,
+        receiver: foodRate.author.id,
       }).then((notification) => (notification ? notification.view() : null));
 
       await User.findById(user.id).then(
