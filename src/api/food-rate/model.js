@@ -41,13 +41,14 @@ foodRateSchema.pre(/^find/, function (next) {
 foodRateSchema.post(/^save/, async function (child) {
   try {
     await Food.updateOne(
-      { id: child.food },
+      { _id: child.food },
       { $inc: { num_rate: 1, score: child.score } }
     );
 
     if (!child.populated("author food")) {
       await child.populate("author food").execPopulate();
     }
+
   } catch (err) {
     console.log(err);
   }

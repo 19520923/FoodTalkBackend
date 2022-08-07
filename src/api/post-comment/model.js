@@ -50,7 +50,8 @@ postCommentSchema.pre(/^find/, function (next) {
 
 postCommentSchema.post(/^save/, async function (child) {
   try {
-    await Post.updateOne({ id: child.post }, { $inc: { num_comment: 1 } });
+    console.log(child)
+    await Post.updateOne({ _id: child.post }, { $inc: { num_comment: 1 } });
     
     if (!child.populated("author post")) {
       await child.populate("author post").execPopulate();
@@ -63,7 +64,7 @@ postCommentSchema.post(/^save/, async function (child) {
 
 postCommentSchema.post(/^remove/, async function (child) {
   try {
-    await Post.updateOne({ id: this.post }, { $dec: { num_comment: 1 } });
+    await Post.updateOne({ _id: this.post }, { $dec: { num_comment: 1 } });
   } catch (err) {
     console.log(err);
   }
