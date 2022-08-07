@@ -66,7 +66,7 @@ foodSchema.methods = {
   view() {
     return {
       // simple view
-      _id: this._id,
+      _id: this.id,
       name: this.name,
       ingredients: this.ingredients,
       recipe: this.recipe,

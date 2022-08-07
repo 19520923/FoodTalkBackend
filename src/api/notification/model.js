@@ -76,8 +76,8 @@ notificationSchema.methods = {
       destination: this.destination,
       is_seen: this.is_seen,
       content: this.content,
-      post_data: this.post_data ? this.post_data.view() : null,
-      food_data: this.food_data ? this.food_data.view() : null,
+      post_data: this.post_data,
+      food_data: this.food_data,
       created_at: this.created_at,
       updated_at: this.updated_at,
     };
