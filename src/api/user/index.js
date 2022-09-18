@@ -77,7 +77,7 @@ router.get("/:id", token({ required: true }), show);
 router.post(
   "/",
   master(),
-  body({ email, password, name, avatar_url, username, role }),
+  body({ email, password, name, username, role }),
   create
 );
 
