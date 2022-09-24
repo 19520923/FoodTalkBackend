@@ -59,7 +59,7 @@ chatSchema.methods = {
       user_2: this.user_2.view(),
       is_user_1_seen: this.is_user_1_seen,
       is_user_2_seen: this.is_user_2_seen,
-      last_message: this.last_message.view(),
+      last_message: this.last_message?.view(),
       created_at: this.created_at,
       updated_at: this.updated_at,
     };
