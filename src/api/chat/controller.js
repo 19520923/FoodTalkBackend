@@ -1,6 +1,7 @@
 import { success, notFound } from "../../services/response/";
 import { Chat } from ".";
 import { User } from "../user";
+import { to } from "../../services/socket";
 
 export const create = ({ user, params }, res, next) =>
   Chat.create({
