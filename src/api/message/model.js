@@ -20,6 +20,7 @@ const messageSchema = new Schema(
     type: {
       type: String,
       enum: ["TEXT", "HTML", "PICTURE"],
+      default: "TEXT"
     },
   },
   { timestamps: { createdAt: "created_at", updatedAt: "updated_at" } }
@@ -30,7 +31,7 @@ messageSchema.pre(/^find/, function (next) {
     return next();
   }
   this.populate({
-    path: "author",
+    path: "author chat",
     options: { _recursed: true },
   });
   next();
@@ -38,8 +39,8 @@ messageSchema.pre(/^find/, function (next) {
 
 messageSchema.post(/^save/, async function (child) {
   try {
-    if (!child.populated("author")) {
-      await child.populate("author").execPopulate();
+    if (!child.populated("author chat")) {
+      await child.populate("author chat").execPopulate();
     }
   } catch (err) {
     console.log(err);
@@ -52,13 +53,14 @@ messageSchema.methods = {
       // simple view
       _id: this.id,
       author: this.author.view(),
-      chat: this.chat,
+      chat: this.chat.id,
       content: this.content,
       type: this.type,
       created_at: this.created_at,
       updated_at: this.updated_at,
     };
   },
+  
   getU(user) {
     return this.user_1.id === user.id ? this.user_2 : this.user_1;
   },
