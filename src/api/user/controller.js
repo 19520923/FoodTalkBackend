@@ -102,8 +102,9 @@ export const follow = ({ params, user }, res, next) => {
   User.findById(params.id)
     .then(notFound(res))
     .then((result) => {
+      console.log(result);
       if (!result) return null;
-      if (user.id === params.id) {
+      if (user.id == params.id) {
         res.status(401).json({
           error: "Follow failed",
           message: "You can't follow yourself",
@@ -111,16 +112,25 @@ export const follow = ({ params, user }, res, next) => {
         return null;
       }
 
-      if (result.follower.includes(user)) {
-        res.status(401).json({
-          error: "Follow failed",
-          message: "Already followed",
-        });
-        return null;
-      }
+      // if (result.follower.includes(user)) {
+      //   res.status(401).json({
+      //     error: "Follow failed",
+      //     message: "Already followed",
+      //   });
+      //   return null;
+      // }
       return result;
     })
-    .then((u) => (u ? u.follow(user.id) : null))
+    .then(async (u) => {
+      if (!u) return null;
+      u.follower.push(user.id);
+      await User.updateOne(
+        { _id: user.id },
+        { $push: { following: u.id } },
+        (err) => console.log(err)
+      );
+      return u.save();
+    })
     .then((u) => (u ? u.view() : null))
     .then(to("user:follow", user))
     .then(success(res))
@@ -140,16 +150,25 @@ export const unfollow = ({ params, user }, res, next) => {
         return null;
       }
 
-      if (!result.follower.includes(user)) {
-        res.status(401).json({
-          error: "Follow failed",
-          message: "Already unfollowed",
-        });
-        return null;
-      }
+      // if (!result.follower.includes(user)) {
+      //   res.status(401).json({
+      //     error: "Follow failed",
+      //     message: "Already unfollowed",
+      //   });
+      //   return null;
+      // }
       return result;
     })
-    .then((u) => (u ? u.unfollow(user.id) : null))
+    .then(async (u) => {
+      if (!u) return null;
+      u.follower = u.follower.filter((f) => f.id !== user.id);
+      await User.updateOne(
+        { _id: user.id },
+        { $pull: { following: u.id } },
+        (err) => console.log(err)
+      );
+      return u.save();
+    })
     .then((u) => (u ? u.view() : null))
     .then(success(res))
     .catch(next);

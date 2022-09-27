@@ -19,7 +19,7 @@ export const fields = [
   "last_login",
   "following",
   "follower",
-  "socket_id"
+  "socket_id",
 ];
 
 const userSchema = new Schema(
@@ -161,20 +161,8 @@ userSchema.methods = {
     return valid ? this : false;
   },
 
-  async follow(user_id) {
-    this.follower.push(user_id);
-
-    await this.updateOne(
-      { _id: user_id },
-      { $push: { following: this.id } },
-      (err) => console.log(err)
-    );
-
-    return this.save();
-  },
-
   async unfollow(user_id) {
-    this.follower = this.follower.filter(f => f.id === user_id);
+    this.follower = this.follower.filter((f) => f.id === user_id);
 
     await this.updateOne(
       { _id: user_id },
