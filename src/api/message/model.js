@@ -59,6 +59,9 @@ messageSchema.methods = {
       updated_at: this.updated_at,
     };
   },
+  getU(user) {
+    return this.user_1.id === user.id ? this.user_2 : this.user_1;
+  },
 };
 
 messageSchema.plugin(mongooseKeywords, { paths: ["content"] });
