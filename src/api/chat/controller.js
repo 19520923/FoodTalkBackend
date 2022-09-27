@@ -6,8 +6,8 @@ import { to } from "../../services/socket";
 export const create = ({ user, params }, res, next) =>
   Chat.findOne({
     $or: [
-      { user_1: req.userId, user_2: req.params.user_id },
-      { user_1: req.params.user_id, user_2: req.userId },
+      { user_1: user.id, user_2: params.id },
+      { user_1: params.id, user_2: user.id },
     ],
   })
     .then((chat) =>
