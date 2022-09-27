@@ -120,7 +120,7 @@ export const follow = ({ params, user }, res, next) => {
       }
       return result;
     })
-    .then((u) => (u ? u.follow(u.id) : null))
+    .then((u) => (u ? u.follow(user.id) : null))
     .then((u) => (u ? u.view() : null))
     .then(to("user:follow", user))
     .then(success(res))
@@ -149,7 +149,7 @@ export const unfollow = ({ params, user }, res, next) => {
       }
       return result;
     })
-    .then((u) => (u ? u.unfollow(u.id) : null))
+    .then((u) => (u ? u.unfollow(user.id) : null))
     .then((u) => (u ? u.view() : null))
     .then(success(res))
     .catch(next);
