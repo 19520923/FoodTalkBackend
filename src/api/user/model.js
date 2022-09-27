@@ -160,18 +160,6 @@ userSchema.methods = {
     const valid = await bcrypt.compare(password, this.password);
     return valid ? this : false;
   },
-
-  async unfollow(user_id) {
-    this.follower = this.follower.filter((f) => f.id === user_id);
-
-    await this.updateOne(
-      { _id: user_id },
-      { $pullAll: { following: this.id } },
-      (err) => console.log(err)
-    );
-
-    return this.save();
-  },
 };
 
 userSchema.statics = {

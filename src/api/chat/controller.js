@@ -4,14 +4,23 @@ import { User } from "../user";
 import { to } from "../../services/socket";
 
 export const create = ({ user, params }, res, next) =>
-  Chat.create({
-    user_1: user,
-    user_2: params.id,
+  Chat.findOne({
+    $or: [
+      { user_1: req.userId, user_2: req.params.user_id },
+      { user_1: req.params.user_id, user_2: req.userId },
+    ],
   })
-    .then((chat) => {
-      User.findById(params.id).then(to("chat:create", chat));
-      return chat.view();
-    })
+    .then((chat) =>
+      chat
+        ? chat.view()
+        : Chat.create({
+            user_1: user,
+            user_2: params.id,
+          }).then((chat) => {
+            User.findById(params.id).then(to("chat:create", chat));
+            return chat.view();
+          })
+    )
     .then(success(res, 201))
     .catch(next);
 
