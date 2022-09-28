@@ -1,5 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import mongooseKeywords from "mongoose-keywords";
+import { Chat } from "../chat";
 
 const messageSchema = new Schema(
   {
@@ -20,7 +21,7 @@ const messageSchema = new Schema(
     type: {
       type: String,
       enum: ["TEXT", "HTML", "PICTURE"],
-      default: "TEXT"
+      default: "TEXT",
     },
   },
   { timestamps: { createdAt: "created_at", updatedAt: "updated_at" } }
@@ -39,6 +40,8 @@ messageSchema.pre(/^find/, function (next) {
 
 messageSchema.post(/^save/, async function (child) {
   try {
+    await Chat.updateOne({ id: child.chat }, { last_message: child });
+
     if (!child.populated("author chat")) {
       await child.populate("author chat").execPopulate();
     }
@@ -60,7 +63,7 @@ messageSchema.methods = {
       updated_at: this.updated_at,
     };
   },
-  
+
   getU(user) {
     return this.user_1.id === user.id ? this.user_2 : this.user_1;
   },
