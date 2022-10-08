@@ -94,7 +94,7 @@ export const updatePassword = (
 export const destroy = ({ params }, res, next) =>
   User.findById(params.id)
     .then(notFound(res))
-    .then((user) => (user ? user.remove() : null))
+    .then((user) => (user ? user.deactivate() : null))
     .then(success(res, 204))
     .catch(next);
 

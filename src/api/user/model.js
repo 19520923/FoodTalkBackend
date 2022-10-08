@@ -134,6 +134,7 @@ userSchema.pre("save", function (next) {
     .catch(next);
 });
 
+/* Populating the follower and following fields. */
 userSchema.pre(/^find/, function (next) {
   if (this.options._recursed) {
     return next();
@@ -146,8 +147,8 @@ userSchema.pre(/^find/, function (next) {
   next();
 });
 
-// get user
 userSchema.methods = {
+/* A method that returns the user's data. */
   view() {
     const view = {};
     fields.forEach((field) => {
@@ -156,6 +157,17 @@ userSchema.methods = {
     return view;
   },
 
+/* Updating the user's is_active field to false. */
+  async deactivate() {
+    await this.updateOne(
+      { _id: this.id },
+      { $set: { is_active: false } },
+      (err) => console.log(err)
+    );
+    return this;
+  },
+
+/* A method that is used to authenticate the user. */
   async authenticate(password) {
     const valid = await bcrypt.compare(password, this.password);
     return valid ? this : false;

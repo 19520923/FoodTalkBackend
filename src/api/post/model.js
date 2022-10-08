@@ -56,6 +56,11 @@ const postSchema = new Schema(
       type: Boolean,
       default: true,
     },
+
+    is_active: {
+      type: Boolean,
+      default: true,
+    },
   },
   {
     timestamps: { createdAt: "created_at", updatedAt: "updated_at" },
@@ -114,6 +119,16 @@ postSchema.methods = {
       _id: this._id,
       reactions: this.reactions,
     };
+  },
+
+  async deactivate() {
+    await this.updateOne(
+      { _id: this.id },
+      { $set: { is_active: false } },
+      (err) => console.log(err)
+    );
+
+    return this
   },
 };
 

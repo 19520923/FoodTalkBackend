@@ -86,10 +86,10 @@ export const update = ({ bodymen: { body }, user, params }, res, next) =>
     .then(success(res))
     .catch(next);
 
-export const destroy = ({ params }, res, next) =>
+export const destroy = ({ params, user }, res, next) =>
   Food.findById(params.id)
     .then(notFound(res))
     .then(authorOrAdmin(res, user, "author"))
-    .then((food) => (food ? food.remove() : null))
+    .then((food) => (food ? food.deactivate() : null))
     .then(success(res, 204))
     .catch(next);

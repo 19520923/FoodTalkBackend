@@ -75,7 +75,7 @@ export const destroy = ({ user, params }, res, next) =>
   Post.findById(params.id)
     .then(notFound(res))
     .then(authorOrAdmin(res, user, "author"))
-    .then((post) => (post ? post.remove() : null))
+    .then((post) => (post ? post.deactivate() : null))
     .then(success(res, 204))
     .catch(next);
 

@@ -35,6 +35,10 @@ const foodSchema = new Schema(
       type: Number,
       default: 0,
     },
+    is_acive: {
+      type: Boolean,
+      default: true
+    }
   },
   {
     timestamps: { createdAt: "created_at", updatedAt: "updated_at" },
@@ -76,6 +80,16 @@ foodSchema.methods = {
       num_rate: this.num_rate,
       created_at: this.created_at,
     };
+  },
+
+  async deactivate() {
+    await this.updateOne(
+      { _id: this.id },
+      { $set: { is_active: false } },
+      (err) => console.log(err)
+    );
+
+    return this
   },
 };
 
