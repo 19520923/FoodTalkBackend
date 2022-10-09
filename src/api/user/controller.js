@@ -41,7 +41,7 @@ export const create = ({ bodymen: { body } }, res, next) =>
         &mdash; Foodtalk Team
       `;
       return sendMail({
-        toEmail: email,
+        toEmail: user.email,
         subject: "Foodtalk - Active account",
         content,
       });
