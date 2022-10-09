@@ -1,7 +1,9 @@
 import { success, notFound } from "../../services/response/";
 import { User } from ".";
-import { sign } from "../../services/jwt";
 import { to } from "../../services/socket";
+import jwt from "jsonwebtoken";
+import { jwtSecret, apiRoot } from "../../config";
+import { sendMail } from "../../services/sendgrid";
 
 export const index = ({ querymen: { query, select, cursor } }, res, next) =>
   User.count(query)
@@ -26,10 +28,27 @@ export const showMe = ({ user }, res) => res.json(user.view());
 export const create = ({ bodymen: { body } }, res, next) =>
   User.create(body)
     .then((user) => {
-      sign(user.id)
-        .then((token) => ({ token, user: user.view() }))
-        .then(success(res, 201));
+      const token = jwt.sign({ userId: user.id }, jwtSecret, {
+        noTimestamp: true,
+        expiresIn: "15m",
+      });
+      const content = `
+        Hey, ${user.name}.<br><br>
+        You requested a new account for your Foodtalk.<br>
+        Please use the following link to active your account. It will expire in 15 minutes.<br><br>
+        <a href="${apiRoot}/api/auth/verify/${token}">Press here</a><br><br>
+        If you didn't make this request then you can safely ignore this email. :)<br><br>
+        &mdash; Foodtalk Team
+      `;
+      return sendMail({
+        toEmail: email,
+        subject: "Foodtalk - Active account",
+        content,
+      });
     })
+    .then(([response]) =>
+      response ? res.status(response.statusCode).end() : null
+    )
     .catch((err) => {
       /* istanbul ignore else */
       if (err.name === "MongoError" && err.code === 11000) {
@@ -42,6 +61,13 @@ export const create = ({ bodymen: { body } }, res, next) =>
         next(err);
       }
     });
+
+export const verifyAccount = ({ params }, res, next) =>
+  User.findById(jwt.verify(params.token, jwtSecret))
+    .then(notFound(res))
+    .then((user) => (user ? user.set({ is_verified: true }).save() : null))
+    .then(success(res))
+    .catch(next);
 
 export const update = ({ bodymen: { body }, params, user }, res, next) =>
   User.findById(params.id === "me" ? user.id : params.id)

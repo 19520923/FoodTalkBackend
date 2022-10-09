@@ -59,7 +59,7 @@ const userSchema = new Schema(
     },
     is_verified: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     avatar_url: {
       type: String,
