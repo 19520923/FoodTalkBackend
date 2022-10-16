@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { middleware as query } from "querymen";
+import { middleware as query, Schema } from "querymen";
 import { middleware as body } from "bodymen";
 import { token } from "../../services/passport";
 import { create, index, show, update, destroy, showUser, likeDislike, showLike } from "./controller";
@@ -14,6 +14,10 @@ const {
   location,
   is_public,
 } = schema.tree;
+
+const schema_q = new Schema({
+  is_active: Boolean,
+});
 
 /**
  * @api {post} /posts Create post
@@ -59,7 +63,7 @@ router.post(
  * @apiError {Object} 400 Some parameters may contain invalid values.
  * @apiError 401 user access only.
  */
-router.get("/", token({ required: true }), query(), index);
+router.get("/", token({ required: true }), query(schema_q), index);
 
 router.get("/:id", token({ required: true }), query(), showUser);
 

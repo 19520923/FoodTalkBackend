@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 import { Router } from "express";
-import { middleware as query } from "querymen";
+import { middleware as query, Schema } from "querymen";
 import { middleware as body } from "bodymen";
 import {
   password as passwordAuth,
@@ -16,7 +16,7 @@ import {
   updatePassword,
   destroy,
   follow,
-  unfollow
+  unfollow,
 } from "./controller";
 import { schema } from "./model";
 export User, { schema } from "./model";
@@ -25,6 +25,9 @@ const router = new Router();
 const { email, password, name, cover_url, about, avatar_url, username, role } =
   schema.tree;
 
+const schema_q = new Schema({
+  is_active: Boolean,
+});
 /**
  * @api {get} /users Retrieve users
  * @apiName RetrieveUsers
@@ -36,7 +39,7 @@ const { email, password, name, cover_url, about, avatar_url, username, role } =
  * @apiError {Object} 400 Some parameters may contain invalid values.
  * @apiError 401 Admin access only.
  */
-router.get("/", token({ required: true }), query(), index);
+router.get("/", token({ required: true }), query(schema_q), index);
 
 /**
  * @api {get} /users/me Retrieve current user
@@ -126,7 +129,7 @@ router.put("/:id/password", passwordAuth(), body({ password }), updatePassword);
  */
 router.delete("/:id", token({ required: true, roles: ["admin"] }), destroy);
 
-router.post("/follow/:id", token({ required: true}), follow)
-router.post("/unfollow/:id", token({ required: true}), unfollow)
+router.post("/follow/:id", token({ required: true }), follow);
+router.post("/unfollow/:id", token({ required: true }), unfollow);
 
 export default router;

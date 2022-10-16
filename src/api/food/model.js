@@ -35,7 +35,7 @@ const foodSchema = new Schema(
       type: Number,
       default: 0,
     },
-    is_acive: {
+    is_active: {
       type: Boolean,
       default: true
     }
