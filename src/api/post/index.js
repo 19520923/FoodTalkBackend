@@ -17,6 +17,7 @@ const {
 
 const schema_q = new Schema({
   is_active: Boolean,
+  is_public: Boolean
 });
 
 /**
