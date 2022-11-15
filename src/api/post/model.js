@@ -82,7 +82,9 @@ postSchema.pre(/^find/, function (next) {
 postSchema.post(/^save/, async function (child) {
   try {
     if (!child.populated("author foods")) {
-      await child.populate("author foods").execPopulate();
+      await child
+        .populate({ path: "author foods", populate: { path: "author" } })
+        .execPopulate();
     }
   } catch (err) {
     console.log(err);
