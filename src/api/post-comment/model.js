@@ -4,13 +4,13 @@ import { Post } from "../post";
 const postCommentSchema = new Schema(
   {
     author: {
-      type: Schema.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
 
     post: {
-      type: Schema.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "Post",
       required: true,
     },
@@ -22,7 +22,7 @@ const postCommentSchema = new Schema(
     },
 
     parent: {
-      type: Schema.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "PostComment",
     },
   },
@@ -42,7 +42,7 @@ postCommentSchema.pre(/^find/, function (next) {
     return next();
   }
   this.populate({
-    path: "author post",
+    path: "author",
     options: { _recursed: true },
   });
   next();

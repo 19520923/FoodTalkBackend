@@ -74,6 +74,7 @@ postSchema.pre(/^find/, function (next) {
   this.populate({
     path: "author foods",
     options: { _recursed: true },
+    populate: { path: "author" },
   });
   next();
 });
@@ -128,7 +129,7 @@ postSchema.methods = {
       (err) => console.log(err)
     );
 
-    return this
+    return this;
   },
 };
 

@@ -4,12 +4,12 @@ import { Food } from "../food";
 const foodRateSchema = new Schema(
   {
     author: {
-      type: Schema.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
     food: {
-      type: Schema.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "Food",
       required: true,
     },

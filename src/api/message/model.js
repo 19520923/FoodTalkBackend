@@ -5,12 +5,12 @@ import { Chat } from "../chat";
 const messageSchema = new Schema(
   {
     author: {
-      type: Schema.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
     chat: {
-      type: Schema.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "Chat",
       required: true,
     },

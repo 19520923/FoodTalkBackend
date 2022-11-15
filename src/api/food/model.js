@@ -23,7 +23,7 @@ const foodSchema = new Schema(
       default: 0,
     },
     author: {
-      type: Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
