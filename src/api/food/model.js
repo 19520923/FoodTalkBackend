@@ -52,6 +52,7 @@ foodSchema.pre(/^find/, function (next) {
   this.populate({
     path: "author",
     options: { _recursed: true },
+    populate: {path: "following follower"}
   });
   next();
 });
