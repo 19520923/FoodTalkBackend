@@ -8,16 +8,20 @@ const foodSchema = new Schema(
       required: true,
       index: true,
     },
-    ingredients: {
-      type: Array,
-      default: [],
-      required: true,
-    },
-    recipe: {
-      type: Array,
-      default: [],
-      required: true,
-    },
+    ingredients: [
+      {
+        type: String,
+        default: [],
+        required: true,
+      },
+    ],
+    recipe: [
+      {
+        type: String,
+        default: [],
+        required: true,
+      },
+    ],
     score: {
       type: Number,
       default: 0,
@@ -37,8 +41,8 @@ const foodSchema = new Schema(
     },
     is_active: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
   },
   {
     timestamps: { createdAt: "created_at", updatedAt: "updated_at" },
@@ -52,7 +56,7 @@ foodSchema.pre(/^find/, function (next) {
   this.populate({
     path: "author",
     options: { _recursed: true },
-    populate: {path: "following follower"}
+    populate: { path: "following follower" },
   });
   next();
 });
@@ -90,7 +94,7 @@ foodSchema.methods = {
       (err) => console.log(err)
     );
 
-    return this
+    return this;
   },
 };
 

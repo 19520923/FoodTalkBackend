@@ -15,10 +15,12 @@ const postSchema = new Schema(
       trim: true,
     },
 
-    photos: {
-      type: Array,
-      default: [],
-    },
+    photos: [
+      {
+        type: String,
+        default: [],
+      },
+    ],
 
     reactions: [
       {
