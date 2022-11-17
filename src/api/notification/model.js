@@ -46,6 +46,7 @@ notificationSchema.pre(/^find/, function (next) {
   this.populate({
     path: "author",
     options: { _recursed: true },
+    populate: { path: "follower following" },
   })
     .populate({
       path: "receiver",
@@ -59,7 +60,10 @@ notificationSchema.post(/^save/, async function (child) {
   try {
     if (!child.populated("author receiver post_data food_data")) {
       await child
-        .populate("author receiver post_data food_data")
+        .populate({
+          path: "author receiver post_data food_data",
+          populate: { path: "follower following" },
+        })
         .execPopulate();
     }
   } catch (err) {}
