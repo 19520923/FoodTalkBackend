@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import { fields } from "../user";
 
 const notificationSchema = new Schema(
   {
@@ -46,7 +47,7 @@ notificationSchema.pre(/^find/, function (next) {
   this.populate({
     path: "author",
     options: { _recursed: true },
-    populate: { path: "follower following" },
+    populate: { path: "follower following", select: fields },
   })
     .populate({
       path: "receiver",
@@ -62,7 +63,7 @@ notificationSchema.post(/^save/, async function (child) {
       await child
         .populate({
           path: "author receiver post_data food_data",
-          populate: { path: "follower following" },
+          populate: { path: "follower following", select: fields },
         })
         .execPopulate();
     }

@@ -1,5 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import mongooseKeywords from "mongoose-keywords";
+import { fields } from "../user";
 
 const foodSchema = new Schema(
   {
@@ -56,7 +57,7 @@ foodSchema.pre(/^find/, function (next) {
   this.populate({
     path: "author",
     options: { _recursed: true },
-    populate: { path: "following follower" },
+    populate: { path: "following follower", select: fields},
   });
   next();
 });

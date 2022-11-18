@@ -20,6 +20,8 @@ export const fields = [
   "following",
   "follower",
   "socket_id",
+  "created_at",
+  "is_active"
 ];
 
 const userSchema = new Schema(

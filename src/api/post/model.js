@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import { fields } from "../user";
 
 const postSchema = new Schema(
   {
@@ -76,7 +77,7 @@ postSchema.pre(/^find/, function (next) {
   this.populate({
     path: "author foods",
     options: { _recursed: true },
-    populate: { path: "author follower following" },
+    populate: { path: "author follower following", select: fields },
   });
   next();
 });

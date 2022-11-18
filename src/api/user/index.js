@@ -19,7 +19,7 @@ import {
   unfollow,
 } from "./controller";
 import { schema } from "./model";
-export User, { schema } from "./model";
+export User, { schema, fields } from "./model";
 
 const router = new Router();
 const { email, password, name, cover_url, about, avatar_url, username, role } =
