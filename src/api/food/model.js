@@ -1,8 +1,5 @@
 import mongoose, { Schema } from 'mongoose'
 import mongooseKeywords from 'mongoose-keywords'
-import { Notification } from '../notification'
-import { User } from '../user'
-import { toAll, to } from '../../services/socket'
 
 const foodSchema = new Schema(
   {
@@ -55,27 +52,6 @@ const foodSchema = new Schema(
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
   }
 )
-
-foodSchema.path('is_active').set(async function (is_active) {
-  if (is_active === false) {
-    const notification = await Notification.create({
-      author: this.author,
-      content: `${this.id} has unblocked, everyone can see it`,
-      type: 'SYSTEM',
-      post_data: this,
-      receiver: this.author
-    }).then((notification) => (notification ? notification.view() : null))
-
-    await User.findById(this.author).then((user) =>
-      /* `to` is a function that takes a socket event and a data and sends it to a specific user. */
-      to('notification:create', notification, user)
-    )
-
-    toAll('food:deactivate', this)
-  }
-
-  return is_active
-})
 
 foodSchema.pre(/^find/, function (next) {
   if (this.options._recursed) {

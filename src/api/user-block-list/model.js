@@ -30,7 +30,11 @@ userBlockListSchema.pre(/^find/, function (next) {
 })
 
 userBlockListSchema.post(/^save/, async function (child) {
-  await User.updateOne({ _id: child.user }, { $inc: { num_report: 1 } })
+  await User.findOneAndUpdate({ _id: child.user }, { $inc: { num_report: 1 } }).then(user => {
+    if (user.num_report >= 5) {
+      user.set({ is_active: false }).save()
+    }
+  })
   try {
     if (!child.populated('author')) {
       await child

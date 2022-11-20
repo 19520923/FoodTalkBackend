@@ -125,13 +125,6 @@ userSchema.path('email').set(function (email) {
   return email
 })
 
-userSchema.path('is_active').set(async function (is_active) {
-  if (is_active === false) {
-    toAll('food:deactivate', this)
-  }
-  return is_active
-})
-
 // hash password
 userSchema.pre('save', function (next) {
   if (!this.isModified('password')) return next()

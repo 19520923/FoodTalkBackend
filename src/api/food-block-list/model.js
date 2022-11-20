@@ -1,5 +1,8 @@
 import mongoose, { Schema } from 'mongoose'
+import { to } from '../../services/socket'
 import { Food } from '../food'
+import { Notification } from '../notification'
+import { User } from '../user'
 
 const foodBlockListSchema = new Schema({
   author: {
@@ -30,7 +33,22 @@ foodBlockListSchema.pre(/^find/, function (next) {
 })
 
 foodBlockListSchema.post(/^save/, async function (child) {
-  await Food.updateOne({ _id: child.food }, { $inc: { num_report: 1 } })
+  await Food.findOneAndUpdate({ _id: child.food }, { $inc: { num_report: 1 } }).then(async (food) => {
+    if (food.num_report >= 5) {
+      food.set({ is_active: false }).save()
+      const notification = await Notification.create({
+        author: food.author,
+        content: `${food.id} has unblocked, everyone can see it`,
+        type: 'SYSTEM',
+        receiver: food.author
+      }).then((notification) => (notification ? notification.view() : null))
+
+      await User.findById(food.author).then((user) =>
+      /* `to` is a function that takes a socket event and a data and sends it to a specific user. */
+        to('notification:create', notification, user)
+      )
+    }
+  })
 
   try {
     if (!child.populated('author')) {
