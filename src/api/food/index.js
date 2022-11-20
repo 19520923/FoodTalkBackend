@@ -1,20 +1,19 @@
-import { Router } from "express";
-import { middleware as query, Schema } from "querymen";
-import { middleware as body } from "bodymen";
-import { master, token } from "../../services/passport";
+import { Router } from 'express'
+import { middleware as query, Schema } from 'querymen'
+import { middleware as body } from 'bodymen'
+import { master, token } from '../../services/passport'
 import {
   create,
   index,
-  show,
   update,
   destroy,
-  showPersonal,
-} from "./controller";
-import { schema } from "./model";
-export Food, { schema } from "./model";
+  showPersonal
+} from './controller'
+import { schema } from './model'
+export Food, { schema } from './model'
 
-const router = new Router();
-const { name, ingredients, recipe, photo } = schema.tree;
+const router = new Router()
+const { name, ingredients, recipe, photo } = schema.tree
 const schema_q = new Schema({
   is_active: Boolean
 })
@@ -37,11 +36,11 @@ const schema_q = new Schema({
  * @apiError 401 master access only.
  */
 router.post(
-  "/",
+  '/',
   token({ required: true }),
   body({ name, ingredients, recipe, photo }),
   create
-);
+)
 
 /**
  * @api {get} /foods Retrieve foods
@@ -55,8 +54,8 @@ router.post(
  * @apiError {Object} 400 Some parameters may contain invalid values.
  * @apiError 401 user access only.
  */
-router.get("/", token({ required: true }), query(schema_q), index);
-router.get("/:id", token({ required: true }), query(), showPersonal);
+router.get('/', token({ required: true }), query(schema_q), index)
+router.get('/:id', token({ required: true }), query(), showPersonal)
 
 /**
  * @api {get} /foods/:id Retrieve food
@@ -90,11 +89,11 @@ router.get("/:id", token({ required: true }), query(), showPersonal);
  * @apiError 401 master access only.
  */
 router.put(
-  "/:id",
+  '/:id',
   token({ required: true }),
   body({ name, ingredients, recipe, photo }),
   update
-);
+)
 
 /**
  * @api {delete} /foods/:id Delete food
@@ -106,6 +105,6 @@ router.put(
  * @apiError 404 Food not found.
  * @apiError 401 master access only.
  */
-router.delete("/:id", master(), destroy);
+router.delete('/:id', master(), destroy)
 
-export default router;
+export default router

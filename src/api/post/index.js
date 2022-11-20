@@ -1,24 +1,24 @@
-import { Router } from "express";
-import { middleware as query, Schema } from "querymen";
-import { middleware as body } from "bodymen";
-import { token } from "../../services/passport";
-import { create, index, show, update, destroy, showUser, likeDislike, showLike } from "./controller";
-import { schema } from "./model";
-export Post, { schema } from "./model";
+import { Router } from 'express'
+import { middleware as query, Schema } from 'querymen'
+import { middleware as body } from 'bodymen'
+import { token } from '../../services/passport'
+import { create, index, update, destroy, showUser, likeDislike, showLike, activate } from './controller'
+import { schema } from './model'
+export Post, { schema } from './model'
 
-const router = new Router();
+const router = new Router()
 const {
   foods,
   content,
   photos,
   location,
-  is_public,
-} = schema.tree;
+  is_public
+} = schema.tree
 
 const schema_q = new Schema({
   is_active: Boolean,
   is_public: Boolean
-});
+})
 
 /**
  * @api {post} /posts Create post
@@ -40,17 +40,17 @@ const schema_q = new Schema({
  * @apiError 401 user access only.
  */
 router.post(
-  "/",
+  '/',
   token({ required: true }),
   body({
     foods,
     content,
     photos,
     location,
-    is_public,
+    is_public
   }),
   create
-);
+)
 
 /**
  * @api {get} /posts Retrieve posts
@@ -64,9 +64,9 @@ router.post(
  * @apiError {Object} 400 Some parameters may contain invalid values.
  * @apiError 401 user access only.
  */
-router.get("/", token({ required: true }), query(schema_q), index);
+router.get('/', token({ required: true }), query(schema_q), index)
 
-router.get("/:id", token({ required: true }), query(), showUser);
+router.get('/:id', token({ required: true }), query(), showUser)
 
 /**
  * @api {get} /posts/:id Retrieve post
@@ -101,17 +101,17 @@ router.get("/:id", token({ required: true }), query(), showUser);
  * @apiError 401 user access only.
  */
 router.put(
-  "/:id",
+  '/:id',
   token({ required: true }),
   body({
     foods,
     content,
     photos,
     location,
-    is_public,
+    is_public
   }),
   update
-);
+)
 
 /**
  * @api {delete} /posts/:id Delete post
@@ -123,8 +123,9 @@ router.put(
  * @apiError 404 Post not found.
  * @apiError 401 user access only.
  */
-router.delete("/:id", token({ required: true }), destroy);
-router.post("/:id/likeDislike", token({ required: true }), likeDislike);
-router.get('/:id/reactions', token({ required: true }), showLike);
+router.delete('/:id', token({ required: true }), destroy)
+router.post('/:id/likeDislike', token({ required: true }), likeDislike)
+router.get('/:id/reactions', token({ required: true }), showLike)
+router.post('/:id/activate', token({ required: true, role: ['admin'] }), activate)
 
-export default router;
+export default router

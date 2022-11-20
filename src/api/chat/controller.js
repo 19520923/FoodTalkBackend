@@ -1,28 +1,24 @@
-import { success, notFound } from "../../services/response/";
-import { Chat } from ".";
-import { User } from "../user";
-import { to } from "../../services/socket";
+import { success, notFound } from '../../services/response/'
+import { Chat } from '.'
+import { to } from '../../services/socket'
 
 export const create = ({ user, params }, res, next) =>
   Chat.findOne({
     $or: [
       { user_1: user.id, user_2: params.id },
-      { user_1: params.id, user_2: user.id },
-    ],
+      { user_1: params.id, user_2: user.id }
+    ]
   })
     .then((chat) =>
       chat
         ? chat.view()
         : Chat.create({
-            user_1: user,
-            user_2: params.id,
-          }).then((chat) => {
-            User.findById(params.id).then(to("chat:create", chat));
-            return chat.view();
-          })
+          user_1: user,
+          user_2: params.id
+        }).then((chat) => to('chat:create', chat, chat.user_2))
     )
     .then(success(res, 201))
-    .catch(next);
+    .catch(next)
 
 export const index = (
   { user, querymen: { query, select, cursor } },
@@ -36,26 +32,32 @@ export const index = (
         select,
         cursor
       )
-        .sort("-updated_at")
+        .sort('-updated_at')
         .then((chats) => ({
           count,
-          rows: chats.map((chat) => chat.view()),
+          rows: chats.map((chat) => chat.view())
         }))
     )
     .then(success(res))
-    .catch(next);
+    .catch(next)
 
 export const destroy = ({ params }, res, next) =>
   Chat.findById(params.id)
     .then(notFound(res))
     .then((chat) => (chat ? chat.remove() : null))
     .then(success(res, 204))
-    .catch(next);
+    .catch(next)
 
 export const seenChat = ({ params, user }, res, next) =>
   Chat.findById(params.id)
     .then(notFound(res))
-    .then((chat) => chat.seen(user))
-    .then(to("chat:seen", user))
+    .then((chat) => chat.set({ is_seen: true }).save())
+    .then(chat => {
+      if (chat.user_1.id === user.id) {
+        to('chat:seen', { is_seen: true }, chat.user_2)
+      } else {
+        to('chat:seen', { is_seen: true }, chat.user_1)
+      }
+    })
     .success(res)
-    .catch(next);
+    .catch(next)

@@ -59,6 +59,6 @@ router.delete('/:id',
   token({ required: true }),
   destroy)
 
-router.post('/:id/seen', token({required: true}), seenChat)
+router.post('/:id/seen', token({ required: true }), seenChat)
 
 export default router

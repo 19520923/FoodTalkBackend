@@ -1,84 +1,87 @@
-import mongoose, { Schema } from "mongoose";
-import { Post } from "../post";
+import mongoose, { Schema } from 'mongoose'
+import { Post } from '../post'
 
 const postCommentSchema = new Schema(
   {
     author: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
+      ref: 'User',
+      required: true
     },
 
     post: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Post",
-      required: true,
+      ref: 'Post',
+      required: true
     },
 
     content: {
       type: String,
       trim: true,
-      required: true,
+      required: true
     },
 
     parent: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "PostComment",
-    },
+      ref: 'PostComment'
+    }
   },
   {
-    timestamps: { createdAt: "created_at", updatedAt: "updated_at" },
+    timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
     toJSON: {
-      virtuals: true,
+      virtuals: true
     },
     toObject: {
-      virtuals: true,
-    },
+      virtuals: true
+    }
   }
-);
+)
 
 postCommentSchema.pre(/^find/, function (next) {
   if (this.options._recursed) {
-    return next();
+    return next()
   }
   this.populate({
-    path: "author",
-    options: { _recursed: true },
-  });
-  next();
-});
+    path: 'author',
+    options: { _recursed: true }
+  })
+  next()
+})
 
 postCommentSchema.post(/^save/, async function (child) {
   try {
-    console.log(child)
-    await Post.updateOne({ _id: child.post }, { $inc: { num_comment: 1 } });
-    
-    if (!child.populated("author post")) {
-      await child.populate("author post").execPopulate();
-    }
+    await Post.updateOne({ _id: child.post }, { $inc: { num_comment: 1 } })
 
+    if (!child.populated('author')) {
+      await child
+        .populate({
+          path: 'author',
+          options: { _recursed: true }
+        })
+        .execPopulate()
+    }
   } catch (err) {
-    console.log(err);
+    console.log(err)
   }
-});
+})
 
 postCommentSchema.post(/^remove/, async function (child) {
   try {
-    await Post.updateOne({ _id: this.post }, { $dec: { num_comment: 1 } });
+    await Post.updateOne({ _id: this.post }, { $dec: { num_comment: 1 } })
   } catch (err) {
-    console.log(err);
+    console.log(err)
   }
-});
+})
 
-postCommentSchema.virtual("children", {
-  ref: "PostComment",
-  localField: "_id",
-  foreignField: "parent",
-  sort: { created_at: 1 },
-});
+postCommentSchema.virtual('children', {
+  ref: 'PostComment',
+  localField: '_id',
+  foreignField: 'parent',
+  sort: { created_at: 1 }
+})
 
 postCommentSchema.methods = {
-  view() {
+  view () {
     return {
       // simple view
       _id: this.id,
@@ -87,12 +90,12 @@ postCommentSchema.methods = {
       content: this.content,
       parent: this.parent,
       created_at: this.created_at,
-      updated_at: this.updated_at,
-    };
-  },
-};
+      updated_at: this.updated_at
+    }
+  }
+}
 
-const model = mongoose.model("PostComment", postCommentSchema);
+const model = mongoose.model('PostComment', postCommentSchema)
 
-export const schema = model.schema;
-export default model;
+export const schema = model.schema
+export default model

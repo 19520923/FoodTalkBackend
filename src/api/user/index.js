@@ -1,12 +1,12 @@
-/* eslint-disable camelcase */
-import { Router } from "express";
-import { middleware as query, Schema } from "querymen";
-import { middleware as body } from "bodymen";
+
+import { Router } from 'express'
+import { middleware as query, Schema } from 'querymen'
+import { middleware as body } from 'bodymen'
 import {
   password as passwordAuth,
   master,
-  token,
-} from "../../services/passport";
+  token
+} from '../../services/passport'
 import {
   index,
   showMe,
@@ -17,17 +17,20 @@ import {
   destroy,
   follow,
   unfollow,
-} from "./controller";
-import { schema } from "./model";
-export User, { schema, fields } from "./model";
+  getFollowing,
+  getFollower,
+  activate
+} from './controller'
+import { schema } from './model'
+export User, { schema, fields } from './model'
 
-const router = new Router();
-const { email, password, name, cover_url, about, avatar_url, username, role } =
-  schema.tree;
+const router = new Router()
+const { email, password, name, about, username, role } =
+  schema.tree
 
 const schema_q = new Schema({
-  is_active: Boolean,
-});
+  is_active: Boolean
+})
 /**
  * @api {get} /users Retrieve users
  * @apiName RetrieveUsers
@@ -39,7 +42,7 @@ const schema_q = new Schema({
  * @apiError {Object} 400 Some parameters may contain invalid values.
  * @apiError 401 Admin access only.
  */
-router.get("/", token({ required: true }), query(schema_q), index);
+router.get('/', token({ required: true }), query(schema_q), index)
 
 /**
  * @api {get} /users/me Retrieve current user
@@ -49,7 +52,7 @@ router.get("/", token({ required: true }), query(schema_q), index);
  * @apiParam {String} access_token User access_token.
  * @apiSuccess {Object} user User's data.
  */
-router.get("/me", token({ required: true }), showMe);
+router.get('/me', token({ required: true }), showMe)
 
 /**
  * @api {get} /users/:id Retrieve user
@@ -59,7 +62,7 @@ router.get("/me", token({ required: true }), showMe);
  * @apiSuccess {Object} user User's data.
  * @apiError 404 User not found.
  */
-router.get("/:id", token({ required: true }), show);
+router.get('/:id', token({ required: true }), show)
 
 /**
  * @api {post} /users Create user
@@ -78,11 +81,11 @@ router.get("/:id", token({ required: true }), show);
  * @apiError 409 Email already registered.
  */
 router.post(
-  "/",
+  '/',
   master(),
   body({ email, password, name, username, role }),
   create
-);
+)
 
 /**
  * @api {put} /users/:id Update user
@@ -98,11 +101,11 @@ router.post(
  * @apiError 404 User not found.
  */
 router.put(
-  "/:id",
+  '/:id',
   token({ required: true }),
-  body({ name, avatar_url, username, about, cover_url }),
+  body({ name, username, about }),
   update
-);
+)
 
 /**
  * @api {put} /users/:id/password Update password
@@ -115,7 +118,7 @@ router.put(
  * @apiError 401 Current user access only.
  * @apiError 404 User not found.
  */
-router.put("/:id/password", passwordAuth(), body({ password }), updatePassword);
+router.put('/:id/password', passwordAuth(), body({ password }), updatePassword)
 
 /**
  * @api {delete} /users/:id Delete user
@@ -127,9 +130,13 @@ router.put("/:id/password", passwordAuth(), body({ password }), updatePassword);
  * @apiError 401 Admin access only.
  * @apiError 404 User not found.
  */
-router.delete("/:id", token({ required: true, roles: ["admin"] }), destroy);
+router.delete('/:id', token({ required: true, roles: ['admin'] }), destroy)
 
-router.post("/follow/:id", token({ required: true }), follow);
-router.post("/unfollow/:id", token({ required: true }), unfollow);
+router.post('/:id', token({ required: true, roles: ['admin'] }), activate)
 
-export default router;
+router.post('/follow/:id', token({ required: true }), follow)
+router.post('/unfollow/:id', token({ required: true }), unfollow)
+router.get('/:id/following', token({ required: true }), getFollowing)
+router.get('/:id/follower', token({ required: true }), getFollower)
+
+export default router

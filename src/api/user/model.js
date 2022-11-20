@@ -1,28 +1,29 @@
-/* eslint-disable camelcase */
-import crypto from "crypto";
-import bcrypt from "bcrypt";
-import randtoken from "rand-token";
-import mongoose, { Schema } from "mongoose";
-import mongooseKeywords from "mongoose-keywords";
-import { env } from "../../config";
+import crypto from 'crypto'
+import bcrypt from 'bcrypt'
+import randtoken from 'rand-token'
+import mongoose, { Schema } from 'mongoose'
+import mongooseKeywords from 'mongoose-keywords'
+import { env } from '../../config'
+import { toAll } from '../../services/socket'
 
-const roles = ["user", "admin"];
+const roles = ['user', 'admin']
 export const fields = [
-  "_id",
-  "name",
-  "email",
-  "username",
-  "is_current",
-  "avatar_url",
-  "cover_url",
-  "about",
-  "last_login",
-  "following",
-  "follower",
-  "socket_id",
-  "created_at",
-  "is_active"
-];
+  '_id',
+  'name',
+  'email',
+  'username',
+  'is_current',
+  'avatar_url',
+  'cover_url',
+  'about',
+  'last_login',
+  'following',
+  'follower',
+  'socket_id',
+  'created_at',
+  'is_active',
+  'num_report'
+]
 
 const userSchema = new Schema(
   {
@@ -32,179 +33,180 @@ const userSchema = new Schema(
       required: true,
       unique: true,
       trim: true,
-      lowercase: true,
+      lowercase: true
     },
     password: {
       type: String,
       required: true,
-      minlength: 6,
+      minlength: 6
     },
     name: {
       type: String,
       index: true,
-      trim: true,
+      trim: true
     },
     username: {
       type: String,
       required: true,
       trim: true,
       unique: true,
-      lowercase: true,
+      lowercase: true
     },
     is_current: {
       type: Boolean,
-      default: false,
+      default: false
     },
     is_active: {
       type: Boolean,
-      default: true,
+      default: true
     },
     is_verified: {
       type: Boolean,
-      default: false,
+      default: false
     },
     avatar_url: {
       type: String,
-      trim: true,
+      trim: true
     },
     cover_url: {
       type: String,
       trim: true,
       default:
-        "https://i.pinimg.com/originals/28/35/be/2835be38b5274a4b20155999a7613542.jpg",
+        'https://i.pinimg.com/originals/28/35/be/2835be38b5274a4b20155999a7613542.jpg'
     },
     follower: [
       {
         type: Schema.Types.ObjectId,
-        ref: "User",
-      },
+        ref: 'User'
+      }
     ],
 
     following: [
       {
         type: Schema.Types.ObjectId,
-        ref: "User",
-      },
+        ref: 'User'
+      }
     ],
     about: String,
     socket_id: String,
     last_login: Date,
     services: {
       facebook: String,
-      google: String,
+      google: String
     },
     role: {
       type: String,
       enum: roles,
-      default: "user",
+      default: 'user'
     },
+    num_report: {
+      type: Number,
+      default: 0
+    }
   },
   {
-    timestamps: { createdAt: "created_at", updatedAt: "updated_at" },
+    timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
   }
-);
+)
 
-userSchema.path("email").set(function (email) {
+userSchema.path('email').set(function (email) {
   if (
     !this.avatar_url ||
-    this.avatar_url.indexOf("https://gravatar.com") === 0
+    this.avatar_url.indexOf('https://gravatar.com') === 0
   ) {
-    const hash = crypto.createHash("md5").update(email).digest("hex");
-    this.avatar_url = `https://gravatar.com/avatar/${hash}?d=identicon`;
+    const hash = crypto.createHash('md5').update(email).digest('hex')
+    this.avatar_url = `https://gravatar.com/avatar/${hash}?d=identicon`
   }
 
   if (!this.name) {
-    this.name = email.replace(/^(.+)@.+$/, "$1");
+    this.name = email.replace(/^(.+)@.+$/, '$1')
   }
 
-  return email;
-});
+  return email
+})
+
+userSchema.path('is_active').set(async function (is_active) {
+  if (is_active === false) {
+    toAll('food:deactivate', this)
+  }
+  return is_active
+})
 
 // hash password
-userSchema.pre("save", function (next) {
-  if (!this.isModified("password")) return next();
+userSchema.pre('save', function (next) {
+  if (!this.isModified('password')) return next()
 
   /* istanbul ignore next */
-  const rounds = env === "test" ? 1 : 9;
+  const rounds = env === 'test' ? 1 : 9
 
   bcrypt
     .hash(this.password, rounds)
     .then((hash) => {
-      this.password = hash;
-      next();
+      this.password = hash
+      next()
     })
-    .catch(next);
-});
+    .catch(next)
+})
 
 /* Populating the follower and following fields. */
-userSchema.pre(/^find/, function (next) {
-  if (this.options._recursed) {
-    return next();
-  }
-  this.populate({
-    path: "follower following",
-    select: fields,
-    options: { _recursed: true },
-  });
-  next();
-});
+// userSchema.pre(/^find/, function (next) {
+//   if (this.options._recursed) {
+//     return next();
+//   }
+//   this.populate({
+//     path: "follower following",
+//     select: fields,
+//     options: { _recursed: true },
+//   });
+//   next();
+// });
 
 userSchema.methods = {
-/* A method that returns the user's data. */
-  view() {
-    const view = {};
+  /* A method that returns the user's data. */
+  view () {
+    const view = {}
     fields.forEach((field) => {
-      view[field] = this[field];
-    });
-    return view;
+      view[field] = this[field]
+    })
+    return view
   },
 
-/* Updating the user's is_active field to false. */
-  async deactivate() {
-    await this.updateOne(
-      { _id: this.id },
-      { $set: { is_active: false } },
-      (err) => console.log(err)
-    );
-    return this;
-  },
-
-/* A method that is used to authenticate the user. */
-  async authenticate(password) {
-    const valid = await bcrypt.compare(password, this.password);
-    return valid ? this : false;
-  },
-};
+  /* A method that is used to authenticate the user. */
+  async authenticate (password) {
+    const valid = await bcrypt.compare(password, this.password)
+    return valid ? this : false
+  }
+}
 
 userSchema.statics = {
   roles,
 
-  createFromService({ service, id, email, name, avatar_url }) {
+  createFromService ({ service, id, email, name, avatar_url }) {
     return this.findOne({
-      $or: [{ [`services.${service}`]: id }, { email }],
+      $or: [{ [`services.${service}`]: id }, { email }]
     }).then((user) => {
       if (user) {
-        user.services[service] = id;
-        user.name = name;
-        user.avatar_url = avatar_url;
-        return user.save();
+        user.services[service] = id
+        user.name = name
+        user.avatar_url = avatar_url
+        return user.save()
       } else {
-        const password = randtoken.generate(16);
+        const password = randtoken.generate(16)
         return this.create({
           services: { [service]: id },
           email,
           password,
           name,
-          avatar_url,
-        });
+          avatar_url
+        })
       }
-    });
-  },
-};
+    })
+  }
+}
 
-userSchema.plugin(mongooseKeywords, { paths: ["email", "name", "username"] });
+userSchema.plugin(mongooseKeywords, { paths: ['email', 'name', 'username'] })
 
-const model = mongoose.model("User", userSchema);
+const model = mongoose.model('User', userSchema)
 
-export const schema = model.schema;
-export default model;
+export const schema = model.schema
+export default model
