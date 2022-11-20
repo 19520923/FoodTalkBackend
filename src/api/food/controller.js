@@ -51,15 +51,13 @@ export const showPersonal = (
   next
 ) =>
   Food.count(
-    { author: params.id === 'me' ? user.id : params.id },
-    query,
+    { author: params.id === 'me' ? user.id : params.id, ...query },
     select,
     cursor
   )
     .then((count) =>
       Food.find(
-        { author: params.id === 'me' ? user.id : params.id },
-        query,
+        { author: params.id === 'me' ? user.id : params.id, ...query },
         select,
         cursor
       ).then((foods) => ({
