@@ -21,6 +21,8 @@
     ]
   },
   "devDependencies": {
+    "@babel/plugin-proposal-export-default-from": "^7.18.10",
+    "@babel/plugin-transform-runtime": "^7.19.6",
     "apidoc": "^0.20.0",
     "apidoc-markdown": "^0.2.1",
     "babel-eslint": "^10.1.0",
@@ -43,8 +45,6 @@
   },
   "dependencies": {
     "@babel/core": "^7.9.0",
-    "@babel/plugin-proposal-export-default-from": "^7.9.0",
-    "@babel/plugin-transform-runtime": "^7.9.0",
     "@babel/preset-env": "^7.9.0",
     "@babel/register": "^7.9.0",
     "@babel/runtime": "^7.9.0",
