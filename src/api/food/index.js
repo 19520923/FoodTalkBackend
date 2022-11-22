@@ -55,7 +55,7 @@ router.post(
  * @apiError 401 user access only.
  */
 router.get('/', token({ required: true }), query(schema_q), index)
-router.get('/:id', token({ required: true }), query(), showPersonal)
+router.get('/:id', token({ required: true }), query(schema_q), showPersonal)
 
 /**
  * @api {get} /foods/:id Retrieve food

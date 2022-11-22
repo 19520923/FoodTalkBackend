@@ -65,7 +65,7 @@ const postSchema = new Schema(
     },
 
     num_report: {
-      type: Boolean,
+      type: Number,
       default: 0
     }
   },

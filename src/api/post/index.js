@@ -66,7 +66,7 @@ router.post(
  */
 router.get('/', token({ required: true }), query(schema_q), index)
 
-router.get('/:id', token({ required: true }), query(), showUser)
+router.get('/:id', token({ required: true }), query(schema_q), showUser)
 
 /**
  * @api {get} /posts/:id Retrieve post
