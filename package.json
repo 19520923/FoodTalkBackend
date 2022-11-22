@@ -71,5 +71,11 @@
     "request": "^2.88.2",
     "request-promise": "^4.2.5",
     "socket.io": "^4.5.1"
+  },
+  "babel": {
+    "plugins": [
+      "@babel/plugin-transform-runtime",
+    "@babel/plugin-proposal-export-default-from"
+    ]
   }
 }
