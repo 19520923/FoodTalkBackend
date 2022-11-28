@@ -71,7 +71,7 @@ notificationSchema.methods = {
       _id: this.id,
       type: this.type,
       author: this.author.view(),
-      receiver: this.receiver.view(),
+      receiver: this.receiver,
       destination: this.destination,
       is_seen: this.is_seen,
       content: this.content,

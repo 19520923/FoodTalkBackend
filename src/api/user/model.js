@@ -4,7 +4,6 @@ import randtoken from 'rand-token'
 import mongoose, { Schema } from 'mongoose'
 import mongooseKeywords from 'mongoose-keywords'
 import { env } from '../../config'
-import { toAll } from '../../services/socket'
 
 const roles = ['user', 'admin']
 export const fields = [

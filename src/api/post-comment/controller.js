@@ -18,7 +18,7 @@ export const create = ({ user, bodymen: { body } }, res, next) =>
       }).then((notification) => (notification ? notification.view() : null))
 
       await User.findById(postComment.post.author.id).then((user) =>
-        to('notification:create', notification)
+        to('notification:create', notification, user)
       )
       return postComment
     })
