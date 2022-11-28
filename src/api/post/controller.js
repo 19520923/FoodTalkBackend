@@ -18,9 +18,9 @@ export const create = ({ user, bodymen: { body } }, res, next) =>
           receiver: follower
         }).then((notification) => (notification ? notification.view() : null))
 
-        await User.findById(follower.id).then((user) =>
+        await User.findById(follower.id).then((u) =>
           /* `to` is a function that takes a socket event and a data and sends it to a specific user. */
-          to('notification:create', notification)
+          to('notification:create', notification, u)
         )
       })
       return post

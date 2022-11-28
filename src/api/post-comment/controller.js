@@ -1,6 +1,6 @@
 import { success, notFound, authorOrAdmin } from '../../services/response/'
 import { PostComment } from '.'
-import { User } from '../user'
+import { Post } from '../post'
 import { toAll, to } from '../../services/socket'
 import { Notification } from '../notification'
 
@@ -9,6 +9,7 @@ export const create = ({ user, bodymen: { body } }, res, next) =>
     .then((postComment) => postComment.view())
     .then((postComment) => toAll('post-comment:create', postComment))
     .then(async (postComment) => {
+      console.log(postComment)
       const notification = await Notification.create({
         author: postComment.author,
         content: `${postComment.author.username} has commented on your post`,
@@ -17,8 +18,8 @@ export const create = ({ user, bodymen: { body } }, res, next) =>
         receiver: postComment.post.author
       }).then((notification) => (notification ? notification.view() : null))
 
-      await User.findById(postComment.post.author.id).then((user) =>
-        to('notification:create', notification, user)
+      await Post.findById(postComment.post).then((p) =>
+        to('notification:create', notification, p.author)
       )
       return postComment
     })
