@@ -9,7 +9,6 @@ export const create = ({ user, bodymen: { body } }, res, next) =>
     .then((postComment) => postComment.view())
     .then((postComment) => toAll('post-comment:create', postComment))
     .then(async (postComment) => {
-      console.log(postComment)
       const notification = await Notification.create({
         author: postComment.author,
         content: `${postComment.author.username} has commented on your post`,
@@ -28,7 +27,7 @@ export const create = ({ user, bodymen: { body } }, res, next) =>
 
 export const index = ({ params, querymen: { query, select, cursor } }, res, next) =>
   PostComment.count({ ...query, post: params.id })
-    .then(count => PostComment.find({ ...query, post: params.id }, select, cursor).sort('created_at')
+    .then(count => PostComment.find({ ...query, post: params.id }, select, cursor)
       .then((postComments) => ({
         count,
         rows: postComments.map((postComment) => postComment.view())
