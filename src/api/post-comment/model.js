@@ -1,5 +1,6 @@
 import mongoose, { Schema } from 'mongoose'
 import { Post } from '../post'
+import { fields } from '../user/model'
 
 const postCommentSchema = new Schema(
   {
@@ -42,8 +43,9 @@ postCommentSchema.pre(/^find/, function (next) {
     return next()
   }
   this.populate({
-    path: 'author',
-    options: { _recursed: true }
+    path: 'author children',
+    options: { _recursed: true },
+    populate: { path: 'author', select: fields }
   })
   next()
 })
@@ -56,7 +58,7 @@ postCommentSchema.post(/^save/, async function (child) {
       await child
         .populate({
           path: 'author',
-          options: { _recursed: true }
+          options: { _recursed: true },
         })
         .execPopulate()
     }
@@ -88,9 +90,10 @@ postCommentSchema.methods = {
       author: this.author.view(),
       post: this.post,
       content: this.content,
-      parent: this.parent,
       created_at: this.created_at,
-      updated_at: this.updated_at
+      updated_at: this.updated_at,
+      children: this.children,
+      parent: this.parent
     }
   }
 }
