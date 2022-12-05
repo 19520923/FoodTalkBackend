@@ -86,7 +86,10 @@ const userSchema = new Schema(
         ref: 'User'
       }
     ],
-    about: String,
+    about: {
+      type: String,
+      default: ''
+    },
     socket_id: String,
     last_login: Date,
     services: {

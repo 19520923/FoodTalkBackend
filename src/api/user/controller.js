@@ -16,6 +16,17 @@ export const index = ({ querymen: { query, select, cursor } }, res, next) =>
     .then(success(res))
     .catch(next)
 
+export const reported = ({ querymen: { query, select, cursor } }, res, next) =>
+  User.count({ ...query, num_report: { $gt: 0 }, is_active: true })
+    .then((count) =>
+      User.find({ ...query, num_report: { $gt: 0 } }, select, cursor).then((users) => ({
+        rows: users.map((user) => user.view()),
+        count
+      }))
+    )
+    .then(success(res))
+    .catch(next)
+
 export const show = ({ params }, res, next) =>
   User.findById(params.id)
     .then(notFound(res))

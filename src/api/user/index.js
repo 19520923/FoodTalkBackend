@@ -19,7 +19,8 @@ import {
   unfollow,
   getFollowing,
   getFollower,
-  activate
+  activate,
+  reported
 } from './controller'
 import { schema } from './model'
 export User, { schema, fields } from './model'
@@ -138,5 +139,6 @@ router.post('/follow/:id', token({ required: true }), follow)
 router.post('/unfollow/:id', token({ required: true }), unfollow)
 router.get('/:id/following', token({ required: true }), getFollowing)
 router.get('/:id/follower', token({ required: true }), getFollower)
+router.get('/list/reported', token({ required: true }), query(), reported)
 
 export default router

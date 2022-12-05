@@ -39,6 +39,17 @@ export const index = ({ querymen: { query, select, cursor } }, res, next) =>
     .then(success(res))
     .catch(next)
 
+export const reported = ({ querymen: { query, select, cursor } }, res, next) =>
+  Post.count({ ...query, num_report: { $gt: 0 }, is_active: true })
+    .then((count) =>
+      Post.find({ ...query, num_report: { $gt: 0 }, is_active: true }, select, cursor).then((posts) => ({
+        count,
+        rows: posts.map((post) => post.view())
+      }))
+    )
+    .then(success(res))
+    .catch(next)
+
 export const showUser = (
   { user, params, querymen: { query, select, cursor } },
   res,

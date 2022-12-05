@@ -45,6 +45,17 @@ export const index = ({ querymen: { query, select, cursor } }, res, next) =>
     .then(success(res))
     .catch(next)
 
+export const reported = ({ querymen: { query, select, cursor } }, res, next) =>
+  Food.count({ ...query, num_report: { $gt: 1 }, is_active: true })
+    .then((count) =>
+      Food.find({ ...query, num_report: { $gt: 1 }, is_active: true }, select, cursor).then((foods) => ({
+        count,
+        rows: foods.map((food) => food.view())
+      }))
+    )
+    .then(success(res))
+    .catch(next)
+
 export const showPersonal = (
   { user, params, querymen: { query, select, cursor } },
   res,

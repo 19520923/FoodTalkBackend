@@ -2,7 +2,7 @@ import { Router } from 'express'
 import { middleware as query, Schema } from 'querymen'
 import { middleware as body } from 'bodymen'
 import { token } from '../../services/passport'
-import { create, index, update, destroy, showUser, likeDislike, showLike, activate } from './controller'
+import { create, index, update, destroy, showUser, likeDislike, showLike, activate, reported } from './controller'
 import { schema } from './model'
 export Post, { schema } from './model'
 
@@ -127,5 +127,6 @@ router.delete('/:id', token({ required: true }), destroy)
 router.post('/:id/likeDislike', token({ required: true }), likeDislike)
 router.get('/:id/reactions', token({ required: true }), showLike)
 router.post('/:id/activate', token({ required: true, role: ['admin'] }), activate)
+router.get('/list/reported', token({ required: true }), query(), reported)
 
 export default router

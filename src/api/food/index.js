@@ -7,7 +7,8 @@ import {
   index,
   update,
   destroy,
-  showPersonal
+  showPersonal,
+  reported
 } from './controller'
 import { schema } from './model'
 export Food, { schema } from './model'
@@ -106,5 +107,6 @@ router.put(
  * @apiError 401 master access only.
  */
 router.delete('/:id', master(), destroy)
+router.get('/list/reported', token({ required: true }), query(), reported)
 
 export default router
