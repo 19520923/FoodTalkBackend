@@ -46,6 +46,10 @@ const foodSchema = new Schema(
     num_report: {
       type: Number,
       default: 0
+    },
+    about: {
+      type: String,
+      default: ''
     }
   },
   {
@@ -100,7 +104,8 @@ foodSchema.methods = {
       num_rate: this.num_rate,
       created_at: this.created_at,
       is_active: this.is_active,
-      num_report: this.num_report
+      num_report: this.num_report,
+      about: this.about
     }
   }
 }
