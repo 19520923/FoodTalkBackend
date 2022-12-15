@@ -132,8 +132,8 @@ postSchema.methods = {
 
     this.save()
     return {
-      _id: this._id,
-      reactions: this.reactions
+      post_id: this._id,
+      user_id: user_id
     }
   }
 }

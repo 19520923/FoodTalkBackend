@@ -26,7 +26,7 @@ export const initSocket = function (server) {
       socket.broadcast.emit('user:disconnect', {
         user_id: user.id
       })
-      storeSocketIdInDB(s.id, user.id)
+      storeSocketIdInDB('', user.id)
     })
   })
 }
