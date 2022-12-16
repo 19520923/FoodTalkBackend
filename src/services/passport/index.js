@@ -124,7 +124,8 @@ passport.use(
       jwtFromRequest: ExtractJwt.fromExtractors([
         ExtractJwt.fromUrlQueryParameter('access_token'),
         ExtractJwt.fromBodyField('access_token'),
-        ExtractJwt.fromAuthHeaderWithScheme('Bearer')
+        ExtractJwt.fromAuthHeaderWithScheme('Bearer'),
+        ExtractJwt.fromAuthHeaderAsBearerToken('Bearer')
       ])
     },
     ({ id }, done) => {
@@ -145,7 +146,8 @@ passport.use(
       jwtFromRequest: ExtractJwt.fromExtractors([
         ExtractJwt.fromUrlQueryParameter('access_token'),
         ExtractJwt.fromBodyField('access_token'),
-        ExtractJwt.fromAuthHeaderWithScheme('Bearer')
+        ExtractJwt.fromAuthHeaderWithScheme('Bearer'),
+        ExtractJwt.fromAuthHeaderAsBearerToken('Bearer')
       ])
     },
     ({ id }, done) => {

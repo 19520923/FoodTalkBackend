@@ -1,6 +1,7 @@
-import socketInit from 'socket.io'
+import { Server } from 'socket.io'
 import passport from 'passport'
 import { User } from '../../api/user'
+import { jwt } from '../passport'
 
 let io
 let socket
@@ -9,7 +10,7 @@ const wrapMiddlewareForSocketIo = (middleware) => (socket, next) =>
   middleware(socket.request, {}, next)
 
 export const initSocket = function (server) {
-  io = socketInit().listen(server)
+  io = new Server(server, { cors: { origin: '*' } })
 
   io.use(wrapMiddlewareForSocketIo(passport.initialize()))
   io.use(wrapMiddlewareForSocketIo(passport.session()))
