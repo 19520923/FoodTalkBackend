@@ -20,7 +20,7 @@ export const initSocket = function (server) {
     socket = s
     const user = s.request.user
 
-    s.broadcast.emit('user:connect', { user_id: user.id })
+    s.emit('user:connect', { user_id: user.id })
     storeSocketIdInDB(s.id, user.id)
 
     socket.on('disconnect', () => {
@@ -33,7 +33,9 @@ export const initSocket = function (server) {
 }
 
 export const toAll = (message, data) => {
-  if (socket) socket.broadcast.emit(message, data)
+  if (socket) {
+    socket.emit(message, data)
+  }
   return data
 }
 
