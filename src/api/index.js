@@ -13,6 +13,7 @@ import message from './message'
 import blockList from './post-block-list'
 import foodBlockList from './food-block-list'
 import userBlockList from './user-block-list'
+import dashboard from './dashboard'
 
 const router = new Router()
 
@@ -53,5 +54,6 @@ router.use('/messages', message)
 router.use('/post-block-lists', blockList)
 router.use('/food-block-lists', foodBlockList)
 router.use('/user-block-lists', userBlockList)
+router.use('/dashboard', dashboard)
 
 export default router

@@ -6,9 +6,9 @@ import { jwtSecret, apiRoot } from '../../config'
 import { sendMail } from '../../services/sendgrid'
 
 export const index = ({ querymen: { query, select, cursor } }, res, next) =>
-  User.count(query)
+  User.count({ ...query, role: 'user' })
     .then((count) =>
-      User.find(query, select, cursor).then((users) => ({
+      User.find({ ...query, role: 'user' }, select, cursor).then((users) => ({
         rows: users.map((user) => user.view()),
         count
       }))
@@ -17,9 +17,9 @@ export const index = ({ querymen: { query, select, cursor } }, res, next) =>
     .catch(next)
 
 export const reported = ({ querymen: { query, select, cursor } }, res, next) =>
-  User.count({ ...query, num_report: { $gt: 0 }, is_active: true })
+  User.count({ ...query, num_report: { $gt: 0 }, is_active: true, role: 'user' })
     .then((count) =>
-      User.find({ ...query, num_report: { $gt: 0 } }, select, cursor).then((users) => ({
+      User.find({ ...query, num_report: { $gt: 0 }, role: 'user' }, select, cursor).then((users) => ({
         rows: users.map((user) => user.view()),
         count
       }))

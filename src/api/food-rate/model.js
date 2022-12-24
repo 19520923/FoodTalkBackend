@@ -32,7 +32,7 @@ foodRateSchema.pre(/^find/, function (next) {
     return next()
   }
   this.populate({
-    path: 'author',
+    path: 'author food',
     options: { _recursed: true }
   })
   next()
@@ -45,10 +45,10 @@ foodRateSchema.post(/^save/, async function (child) {
       { $inc: { num_rate: 1, score: child.score } }
     )
 
-    if (!child.populated('author')) {
+    if (!child.populated('author food')) {
       await child
         .populate({
-          path: 'author',
+          path: 'author food',
           options: { _recursed: true }
         })
         .execPopulate()
@@ -64,7 +64,7 @@ foodRateSchema.methods = {
       // simple view
       _id: this.id,
       author: this.author.view(),
-      food: this.food,
+      food: this.food._id,
       content: this.content,
       score: this.score,
       created_at: this.created_at,

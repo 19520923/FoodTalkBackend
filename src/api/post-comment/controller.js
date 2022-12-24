@@ -6,12 +6,10 @@ import { Notification } from '../notification'
 
 export const create = ({ user, bodymen: { body } }, res, next) =>
   PostComment.create({ ...body, author: user })
-    .then((postComment) => postComment.view())
-    .then((postComment) => toAll('post-comment:create', postComment))
     .then(async (postComment) => {
       const notification = await Notification.create({
-        author: postComment.author,
-        content: `${postComment.author.username} has commented on your post`,
+        author: user,
+        content: `${user.username} has commented on your post`,
         type: 'POST',
         post_data: postComment.post,
         receiver: postComment.post.author
@@ -20,9 +18,10 @@ export const create = ({ user, bodymen: { body } }, res, next) =>
       await Post.findById(postComment.post).then((p) =>
         to('notification:create', notification, p.author)
       )
-      return postComment
+      return postComment.view()
     })
-    .then(success(res, 201))
+    .then((postComment) => toAll('post-comment:create', postComment))
+    .then(success(res))
     .catch(next)
 
 export const index = ({ params, querymen: { query, select, cursor } }, res, next) =>

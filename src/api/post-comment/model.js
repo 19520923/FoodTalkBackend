@@ -46,6 +46,8 @@ postCommentSchema.pre(/^find/, function (next) {
     path: 'author children',
     options: { _recursed: true },
     populate: { path: 'author', select: fields }
+  }).populate({
+    path: 'post', options: { _recursed: true }
   })
   next()
 })
@@ -54,11 +56,11 @@ postCommentSchema.post(/^save/, async function (child) {
   try {
     await Post.updateOne({ _id: child.post }, { $inc: { num_comment: 1 } })
 
-    if (!child.populated('author')) {
+    if (!child.populated('author post')) {
       await child
         .populate({
-          path: 'author',
-          options: { _recursed: true },
+          path: 'author post',
+          options: { _recursed: true }
         })
         .execPopulate()
     }
@@ -88,7 +90,7 @@ postCommentSchema.methods = {
       // simple view
       _id: this.id,
       author: this.author.view(),
-      post: this.post,
+      post: this.post._id,
       content: this.content,
       created_at: this.created_at,
       updated_at: this.updated_at,
