@@ -1,10 +1,8 @@
 import { Server } from 'socket.io'
 import passport from 'passport'
 import { User } from '../../api/user'
-import { jwt } from '../passport'
 
 let io
-let socket
 
 const wrapMiddlewareForSocketIo = (middleware) => (socket, next) =>
   middleware(socket.request, {}, next)
@@ -16,15 +14,14 @@ export const initSocket = function (server) {
   io.use(wrapMiddlewareForSocketIo(passport.session()))
   io.use(wrapMiddlewareForSocketIo(passport.authenticate(['jwt'])))
 
-  io.on('connection', function (s) {
-    socket = s
-    const user = s.request.user
+  io.on('connection', function (socket) {
+    const user = socket.request.user
 
-    s.emit('user:connect', { user_id: user.id })
-    storeSocketIdInDB(s.id, user.id)
+    socket.emit('user:connect', { user_id: user.id })
+    storeSocketIdInDB(socket.id, user.id)
 
     socket.on('disconnect', () => {
-      socket.broadcast.emit('user:disconnect', {
+      socket.emit('user:disconnect', {
         user_id: user.id
       })
       storeSocketIdInDB('', user.id)
@@ -33,9 +30,7 @@ export const initSocket = function (server) {
 }
 
 export const toAll = (message, data) => {
-  if (socket) {
-    socket.emit(message, data)
-  }
+  io.emit(message, data)
   return data
 }
 
