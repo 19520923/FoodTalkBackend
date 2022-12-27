@@ -1,23 +1,23 @@
 import { success, notFound, authorOrAdmin } from '../../services/response/'
 import { PostComment } from '.'
-import { Post } from '../post'
 import { toAll, to } from '../../services/socket'
 import { Notification } from '../notification'
 
 export const create = ({ user, bodymen: { body } }, res, next) =>
   PostComment.create({ ...body, author: user })
     .then(async (postComment) => {
-      const notification = await Notification.create({
-        author: user,
-        content: `${user.username} has commented on your post`,
-        type: 'POST',
-        post_data: postComment.post,
-        receiver: postComment.post.author
-      }).then((notification) => (notification ? notification.view() : null))
+      if (user.id !== postComment.post.author._id) {
+        const notification = await Notification.create({
+          author: user,
+          content: `${user.username} has commented on your post`,
+          type: 'POST',
+          post_data: postComment.post,
+          receiver: postComment.post.author
+        }).then((notification) => (notification ? notification.view() : null))
 
-      await Post.findById(postComment.post).then((p) =>
-        to('notification:create', notification, p.author)
-      )
+        to('notification:create', notification, postComment.post.author)
+      }
+
       return postComment.view()
     })
     .then((postComment) => toAll('post-comment:create', postComment))

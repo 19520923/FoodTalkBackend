@@ -7,17 +7,19 @@ import { toAll, to } from '../../services/socket'
 export const create = ({ user, bodymen: { body } }, res, next) =>
   FoodRate.create({ ...body, author: user })
     .then(async (foodRate) => {
-      const notification = await Notification.create({
-        author: user,
-        content: `${user.username} has rate your food recipe`,
-        type: 'FOOD',
-        food_data: foodRate.food,
-        receiver: foodRate.food.author
-      }).then((noti) => (noti ? noti.view() : null))
+      if (user.id !== foodRate.food.author._id) {
+        const notification = await Notification.create({
+          author: user,
+          content: `${user.username} has rate your food recipe`,
+          type: 'FOOD',
+          food_data: foodRate.food,
+          receiver: foodRate.food.author
+        }).then((noti) => (noti ? noti.view() : null))
 
-      await User.findById(user.id).then((user) =>
-        to('notification:create', notification, user)
-      )
+        await User.findById(user.id).then((user) =>
+          to('notification:create', notification, user)
+        )
+      }
       return foodRate.view()
     })
     .then((foodRate) => toAll('food-rate:create', foodRate))

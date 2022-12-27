@@ -71,7 +71,7 @@ const userSchema = new Schema(
       type: String,
       trim: true,
       default:
-        'https://i.pinimg.com/originals/28/35/be/2835be38b5274a4b20155999a7613542.jpg'
+        'https://firebasestorage.googleapis.com/v0/b/login-183fb.appspot.com/o/images%2Fdefault%2Fwatercolor-painting-purple-abstract-background_41066-2265.webp?alt=media&token=46efa03b-e270-4212-9d38-2c735a4e483d'
     },
     follower: [
       {
