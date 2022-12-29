@@ -15,8 +15,9 @@ export const create = ({ user, params }, res, next) =>
         : Chat.create({
           user_1: user,
           user_2: params.id
-        }).then((chat) => to('chat:create', chat, chat.user_2))
+        }).then((chat) => chat.view())
     )
+    .then(chat => to('chat:create', chat, chat.user_2))
     .then(success(res, 201))
     .catch(next)
 
