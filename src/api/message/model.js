@@ -32,7 +32,7 @@ messageSchema.pre(/^find/, function (next) {
     return next()
   }
   this.populate({
-    path: 'author',
+    path: 'author chat',
     options: { _recursed: true }
   })
   next()
@@ -42,10 +42,10 @@ messageSchema.post(/^save/, async function (child) {
   try {
     await Chat.updateOne({ id: child.chat }, { last_message: child })
 
-    if (!child.populated('author')) {
+    if (!child.populated('author chat')) {
       await child
         .populate({
-          path: 'author',
+          path: 'author chat',
           options: { _recursed: true }
         })
         .execPopulate()
@@ -67,10 +67,6 @@ messageSchema.methods = {
       created_at: this.created_at,
       updated_at: this.updated_at
     }
-  },
-
-  getU (user) {
-    return this.user_1.id === user.id ? this.user_2 : this.user_1
   }
 }
 
