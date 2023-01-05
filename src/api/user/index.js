@@ -26,7 +26,7 @@ import { schema } from './model'
 export User, { schema, fields } from './model'
 
 const router = new Router()
-const { email, password, name, about, username, role } =
+const { email, password, name, about, username, role, avatar_url, cover_url } =
   schema.tree
 
 const schema_q = new Schema({
@@ -104,7 +104,7 @@ router.post(
 router.put(
   '/:id',
   token({ required: true }),
-  body({ name, username, about }),
+  body({ name, username, about, cover_url, avatar_url }),
   update
 )
 
