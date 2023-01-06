@@ -6,7 +6,8 @@ import { to } from '../../services/socket'
 export const create = ({ user, bodymen: { body } }, res, next) =>
   Message.create({ ...body, author: user })
     .then((message) => {
-      User.findById(message.chat.getU(user)).then((u) =>
+      const send_u = message.chat.user_1 == user.id ? message.chat.user_2 : message.chat.user_1
+      User.findById(send_u).then((u) => 
         to('message:create', message.view(), u)
       )
       return message.view()
