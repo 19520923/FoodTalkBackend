@@ -7,7 +7,7 @@ import { toAll, to } from '../../services/socket'
 export const create = ({ user, bodymen: { body } }, res, next) =>
   FoodRate.create({ ...body, author: user })
     .then(async (foodRate) => {
-      if (user.id !== foodRate.food.author._id) {
+      if (user.id != foodRate.food.author._id) {
         const notification = await Notification.create({
           author: user,
           content: `${user.username} has rate your food recipe`,

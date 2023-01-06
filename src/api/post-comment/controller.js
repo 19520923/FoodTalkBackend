@@ -6,7 +6,7 @@ import { Notification } from '../notification'
 export const create = ({ user, bodymen: { body } }, res, next) =>
   PostComment.create({ ...body, author: user })
     .then(async (postComment) => {
-      if (user.id !== postComment.post.author._id) {
+      if (user.id != postComment.post.author._id) {
         const notification = await Notification.create({
           author: user,
           content: `${user.username} has commented on your post`,
