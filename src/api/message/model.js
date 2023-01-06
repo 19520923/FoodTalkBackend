@@ -40,7 +40,7 @@ messageSchema.pre(/^find/, function (next) {
 
 messageSchema.post(/^save/, async function (child) {
   try {
-    await Chat.updateOne({ id: child.chat }, { last_message: child })
+    await Chat.updateOne({ id: child.chat._id }, { last_message: child })
 
     if (!child.populated('author chat')) {
       await child

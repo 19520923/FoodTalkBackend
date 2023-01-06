@@ -24,8 +24,8 @@ export const create = ({ user, bodymen: { body } }, res, next) =>
           receiver: follower
         }).then((notification) => (notification ? notification.view() : null))
 
-        await User.findById(follower).then((user) =>
-          to('notification:create', notification, user)
+        await User.findById(follower).then((u) =>
+          to('notification:create', notification, u)
         )
       })
 
