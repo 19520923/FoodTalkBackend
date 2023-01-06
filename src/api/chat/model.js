@@ -66,7 +66,7 @@ chatSchema.methods = {
   },
 
   getU (user) {
-    return this.user_1.id === user.id ? this.user_2 : this.user_1
+    return this.user_1._id === user.id ? this.user_2 : this.user_1
   }
 }
 
