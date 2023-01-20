@@ -100,7 +100,7 @@ export const activate = ({ user, params }, res, next) =>
   Post.findById(params.id)
     .then(notFound(res))
     .then(authorOrAdmin(res, user))
-    .then((post) => (post ? post.set({ is_actve: true }).save() : null))
+    .then((post) => (post ? post.set({ is_active: true }).save() : null))
     .then(post => post.view())
     .then(success(res, 204))
     .catch(next)
