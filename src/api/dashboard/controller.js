@@ -5,8 +5,9 @@ import { Food } from '../food'
 
 export const show = async ({ params }, res, next) => {
   const { year } = params
-  const START_YEAR = new Date(year, 1, 1)
-  const END_YEAR = new Date(year, 12, 1)
+  const START_YEAR = new Date(year, 0, 1)
+  console.log(START_YEAR)
+  const END_YEAR = new Date(year, 11, 31)
   const total_users = await User.count({})
   const total_posts = await Post.count({})
   const total_foods = await Food.count({})
@@ -32,7 +33,7 @@ export const show = async ({ params }, res, next) => {
         _id: {
           $dateToString: {
             date: '$created_at',
-            format: '%Y-%m'
+            format: '%m'
           }
         },
         count: {
@@ -61,7 +62,7 @@ export const show = async ({ params }, res, next) => {
         _id: {
           $dateToString: {
             date: '$created_at',
-            format: '%Y-%m'
+            format: '%m'
           }
         },
         count: {
@@ -91,7 +92,7 @@ export const show = async ({ params }, res, next) => {
         _id: {
           $dateToString: {
             date: '$created_at',
-            format: '%Y-%m'
+            format: '%m'
           }
         },
         count: {
