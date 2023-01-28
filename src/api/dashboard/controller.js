@@ -102,7 +102,7 @@ export const show = async ({ params }, res, next) => {
     }
   ])
 
-  const top_users = await User.find({ role: 'user' }).sort({ follower: 1 })
+  const top_users = await User.find({ role: 'user' }).sort({ follower: -1 }).limit(5)
 
   const entity = {
     total_users,
