@@ -103,3 +103,12 @@ export const destroy = ({ params, user }, res, next) =>
     .then((food) => food.view())
     .then(success(res, 204))
     .catch(next)
+
+export const activate = ({ params, user }, res, next) =>
+  Food.findById(params.id)
+    .then(notFound(res))
+    .then(authorOrAdmin(res, user, 'author'))
+    .then((food) => (food ? food.set({ is_active: true }).save() : null))
+    .then((food) => food.view())
+    .then(success(res, 204))
+    .catch(next)

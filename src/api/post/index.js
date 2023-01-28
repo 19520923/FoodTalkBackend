@@ -126,7 +126,7 @@ router.put(
 router.delete('/:id', token({ required: true }), destroy)
 router.post('/:id/likeDislike', token({ required: true }), likeDislike)
 router.get('/:id/reactions', token({ required: true }), showLike)
-router.post('/:id/activate', token({ required: true, role: ['admin'] }), activate)
+router.post('/:id/activate', token({ required: true, roles: ['admin'] }), activate)
 router.get('/list/reported', token({ required: true }), query(), reported)
 
 export default router

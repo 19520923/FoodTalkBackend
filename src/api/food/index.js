@@ -8,7 +8,8 @@ import {
   update,
   destroy,
   showPersonal,
-  reported
+  reported,
+  activate
 } from './controller'
 import { schema } from './model'
 export Food, { schema } from './model'
@@ -106,7 +107,8 @@ router.put(
  * @apiError 404 Food not found.
  * @apiError 401 master access only.
  */
-router.delete('/:id', master(), destroy)
+router.delete('/:id', token({ required: true, roles: ['admin'] }), destroy)
+router.post('/:id/activate', token({ required: true, roles: ['admin'] }), activate)
 router.get('/list/reported', token({ required: true }), query(), reported)
 
 export default router
